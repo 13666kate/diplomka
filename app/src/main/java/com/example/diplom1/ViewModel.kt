@@ -1,9 +1,9 @@
 package com.example.diplom1
 
-import com.example.diplom1.login.mvvm.LoginViewModel
-import com.example.diplom1.registration.mvvm.RegistrationViewModel
+import viewModel.LoginViewModel
+import viewModel.RegistrationViewModel
 
 data class ViewModel(
-    val Ligin:LoginViewModel,
+    val Ligin: RegistrationViewModel,
     val registrationViewModel: RegistrationViewModel
 )

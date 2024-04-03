@@ -2,11 +2,28 @@
     <string name="app_name">diplom1</string>
     <string name="Login">Логин</string>
     <string name="Password">Пароль</string>
+    <string name="Email">Email</string>
+    <string name="LastName">Фамилия</string>
+    <string name="Number">Номер телефона</string>
+    <string name="DateBirthday">Дата Рождения</string>
+
+
+    <string name="FestName">Имя</string>
     <string name="Vfod">Вход</string>
     <string name="registrarions">Eще не зарегистрированны? Регистрация</string>
+
+    <string name="EmailClue">madrid.1@gmail.com</string>
+    <string name="PasswordlClue">mAdrid123</string>
+    <string name="LoginClue">Anica</string>
+    <string name="LastNameClue">Аника</string>
+    <string name="FestNameClue">Ломан</string>
+    <string name="NumberClue">+996703271641</string>
+    <string name="DateBirthdayClue">02/10/1992</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_main">MainActivity</string>
 
 </resources>

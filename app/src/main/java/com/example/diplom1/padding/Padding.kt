@@ -7,20 +7,35 @@ object Padding {
     val paddingNormalEghtin = 18.dp
     val paddingNormalTen = 10.dp
     val paddingSmall = 20.dp
+    val paddingFifty = 50.dp
     val paddingZero = 0.dp
+
     val widthOutlineLoginScreen = 350.dp
     val heightOutlineLoginScreen = 80.dp
     val widthButtonLoginScreen = 270.dp
     val heightButtonLoginScreen = 65.dp
+
+    val widthOutlineRegistrationScreen = 300.dp
+    val heightOutlineRegistrationsScreen = 60.dp
+    val widthButtonRegistrationScreen = 270.dp
+    val heightButtonRegistrationScreen = 65.dp
+
+    val heightImageRegistrationScreen = 170.dp
+    val wightImageRegistrationScreen = 170.dp
+    val paddingLeftOrRightImage = 25.dp
+    val sizeImageRegistrationScreen = 150.dp
+
+    val iconSizeRegistrationAccount = 110.dp
+    val iconSizeRegistrationAdd = 40.dp
     val widthUtilScreen1 = 280.dp
     val imageSize= 120.dp
     val border = 3.dp
     val heightButtonScreen2 = 80.dp
     val borderSize = 5.dp
     val shape= 100.dp
-    val tventy = 12.dp
+    val tvelv = 12.dp
     val textTopRegistration = 190.dp
 
-    val textLabelSize= 18.sp
-    val textSize = 20.sp
+    val textLabelSize= 15.sp
+    val textSize = 15.sp
 }
