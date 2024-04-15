@@ -1,146 +1,326 @@
 package Logical.LogicalRegistrations
 
+
+import android.app.Activity
+import android.content.ContentValues.TAG
+import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
+import android.provider.MediaStore
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.ui.graphics.Color
-import com.example.diplom1.ui.theme.colorOlivical
-import com.example.diplom1.ui.theme.Red
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+
+import com.google.mlkit.vision.text.TextRecognition
+
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceDetectorOptions
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import viewModel.RegistrationViewModel
-import java.text.SimpleDateFormat
-import java.util.Date
 
 
-public class  LogicalRegistrations( val registrationViewModel: RegistrationViewModel) {
+public class LogicalRegistrations() {
 
-    fun clueLogin(textEmail:MutableState<String>,
-                  textColor:MutableState<Color> ) {
-
-        var text = textEmail.value
-        val containsUpperCase = !text.any { it.isUpperCase()}
-            if(textEmail.value.isEmpty() || (textEmail.value.contains(' ') || containsUpperCase )) {
-            textColor.value= Red
-        }else{
-            textColor.value= colorOlivical
+    @Composable
+    fun imageLauncherRecognizedText(
+        stateImage: MutableState<Bitmap?>,
+        contextToast: Context,
+        stateOrRecognized: MutableState<String>,
+        regex: String,
+    ): ActivityResultLauncher<Intent> {
+        return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // Получаем изображение из результата
+                val bitmap = result.data?.extras?.get("data") as? Bitmap
+                // Результат записываем во ViewModel
+                stateImage.value = bitmap
+                if (bitmap != null) {
+                    // Вызываем переданную функцию для обработки изображения
+                    LogicalRegistrations().textRecognized(
+                        stateImage = bitmap,
+                        sateTextOrRecognized = stateOrRecognized,
+                        contextToast = contextToast,
+                        regex = regex
+                    )
+                    Toast.makeText(contextToast, "Успешно обработано!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(
+                        contextToast,
+                        "Не удалось обработать изображение",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
-            //registrationViewModel.isButtonEnabled.value = false
-        }
-
-    fun cluePassword(textPassword:MutableState<String>,
-                     textColor:MutableState<Color> ) {
-
-        var text = textPassword.value
-        val containsNumber = !text.any { it.isDigit()}
-        if(textPassword.value.isEmpty() || containsNumber ) {
-            textColor.value= Red
-        }else{
-            textColor.value= colorOlivical
-        }
-        //registrationViewModel.isButtonEnabled.value = false
     }
-    fun clueEmail(textEmail:MutableState<String>,
-                  textColor:MutableState<Color> ) {
 
-        var text = textEmail.value
-        val containsNumber = !text.contains('@')
-        val endsWithWord = !text.endsWith("@gmail.com")
-        if(textEmail.value.isEmpty()  || endsWithWord) {
-            textColor.value= Red
-        }else{
-            textColor.value= colorOlivical
+    @Composable
+    fun imageLauncherFaceDetections(
+        stateImage: MutableState<Bitmap?>,
+        contextToast: Context,
+        stateFaceDetected: MutableState<Boolean>,
+        text: MutableState<String>
+    ): ActivityResultLauncher<Intent> {
+        return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // Получаем изображение из результата
+                val bitmap = result.data?.extras?.get("data") as? Bitmap
+                // Результат записываем во ViewModel
+                stateImage.value = bitmap
+                if (bitmap != null) {
+                    // Вызываем переданную функцию для обработки изображения
+                    LogicalRegistrations().faceRecognized(
+                        bitmap = bitmap,
+                        context = contextToast,
+                        stateFaceDetected = stateFaceDetected,
+                        text = text
+                    )
+                    Toast.makeText(contextToast, "Успешно обработано!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(
+                        contextToast,
+                        "Не удалось обработать изображение",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
-        //registrationViewModel.isButtonEnabled.value = false
-    }
-    fun clueLastName(textLastName:MutableState<String>,
-                  textColor:MutableState<Color> ) {
-
-        var text = textLastName.value
-        val containsUpperCase = !text.any { it.isUpperCase()}
-        val containsNumber = text.any { it.isDigit()}
-        val containsSymbol = text.any { !it.isLetterOrDigit() }
-
-        if(textLastName.value.isEmpty()  || containsNumber ||  containsSymbol || !text[0].isUpperCase()) {
-            textColor.value= Red
-        }else{
-
-            textColor.value= colorOlivical
-        }
-        //registrationViewModel.isButtonEnabled.value = false
-    }
-    fun clueNumber(textNumber:MutableState<String>,
-                   textColor:MutableState<Color> ) {
-
-        var text = textNumber.value
-  /*      val containsNumber = !text.all{ it.isDigit()}
-        val containsSimbol = text.any { !it.isLetterOrDigit() }
-        val containsLowerCase =  text.any { it.isLowerCase() }
-        val containsUpperCase =  text.any { it.isUpperCase() }*/
-        val isCorrectFormat = checkPhoneNumberFormat(text)
-        if(textNumber.value.isEmpty()  || !isCorrectFormat) {
-                textColor.value= Red
-        }else{
-
-            textColor.value= colorOlivical
-        }
-        //registrationViewModel.isButtonEnabled.value = false
-    }
-    fun clueDate(dataState:MutableState<String>,
-                 textColorDate:MutableState<Color> ) {
-
-        var text = dataState.value
-        val isCorrectFormat = checkPhoneNumberFormat(text)
-        if(dataState.value.isEmpty()  || !isValidDateFormat(text)) {
-            textColorDate.value= Red
-        }else{
-
-            textColorDate.value= colorOlivical
-        }
-        //registrationViewModel.isButtonEnabled.value = false
-    }
-    fun checkPhoneNumberFormat(phoneNumber: String): Boolean {
-        val regex = Regex("^\\+996\\d{9}$")
-        return regex.matches(phoneNumber)
-    }
-    fun isValidDateFormat(text: String): Boolean {
-        val regex = Regex("^\\d{1,2}\\.\\d{1,2}\\.\\d{4}\$")
-        //проверка верен ли шаблон
-        if (!regex.matches(text)) {
-            return false
-        }
-        // разбиваем нашу строку на части
-        // ориентируемся точкой
-        val parts = text.split(".")
-        val day = parts[0].toIntOrNull()
-        val month = parts[1].toIntOrNull()
-        val year = parts[2].toIntOrNull()
-
-        // Проверка корректности значений дня, месяца и года
-        //не пусты ли значения
-        if (day == null || month == null || year == null) {
-            return false
-        }
-        // проверка  день меясц и год  в правильном диапозоне
-        if (day !in 1..31 || month !in 1..12 || year < 0) {
-
-            return false
-        }
-       // если это февраль то проверка на высокосный год
-        val maxDay = when (month) {
-            2 -> if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) 29 else 28
-        // апрель июнь сентябрь ноябрь имеют по 30 дней
-            4, 6, 9, 11 -> 30
-            // все остальные по 31
-            else -> 31
-        }
-        if (day !in 1..maxDay) {
-            return false
-        }
-
-        return true
     }
 
 
-    fun convertLongToTime(time: Long): String{
-       val date = Date(time)
-        val format = SimpleDateFormat("d.MM.yyyy")
-        return format.format(date)
+    fun equelsImageDetectionsFace(stateBitmap: MutableState<Bitmap?>) {
+        val bitmap: Bitmap = stateBitmap.value!!
+        val inputImage = InputImage.fromBitmap(bitmap, 0)
+        val face = FaceDetection.getClient()
+        val rezult = face.process(inputImage).addOnSuccessListener { face ->
+            if (face.isNotEmpty()) {
+                //boundingBox получает прямоугольник охватывающий лицо
+                val faceDescriptor = face[0].allLandmarks
+            }
+
+        }
+
     }
-}
+
+    fun faceRecognized(
+        bitmap: Bitmap,
+        context: Context,
+        stateFaceDetected: MutableState<Boolean>,
+        text: MutableState<String>,
+    ) {
+
+
+        // Настройки детектора лиц
+        val options = FaceDetectorOptions.Builder()
+            .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+            .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+            .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+            .setMinFaceSize(0.15f)
+            .enableTracking()
+            .build()
+
+        val faceDetector = FaceDetection.getClient(options)
+        val image = InputImage.fromBitmap(bitmap, 0)
+        if (image != null) {
+            // Запускаем процесс обнаружения лиц
+            faceDetector.process(image)
+                .addOnSuccessListener { faces ->
+                    if (faces.isNotEmpty()) {
+                        // Лица обнаружены
+                        stateFaceDetected.value = true
+                        text.value = "Лица обнаружены"
+                        Toast.makeText(context, "Лица обнаружены", Toast.LENGTH_SHORT).show()
+                    } else {
+                        // Лица не обнаружены
+                        stateFaceDetected.value = false
+                        text.value = "Лицо не обнаруженно"
+                        Toast.makeText(context, "Лица не обнаружены", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .addOnFailureListener { e ->
+                    // Обработка ошибки обнаружения лиц
+                    Log.e(TAG, "Ошибка при обнаружении лиц: ${e.message}", e)
+                    stateFaceDetected.value = false
+                    text.value = "Ошибка при обнаружении лиц"
+                    Toast.makeText(context, "Ошибка при обнаружении лиц", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            text.value = "Пустое изображение"
+            Toast.makeText(context, "Пустое изображение", Toast.LENGTH_SHORT).show()
+            stateFaceDetected.value = false
+        }
+    }
+
+    @Composable
+    fun cameraPermission(
+        stateCameraPermissions: MutableState<Boolean>,
+        contextToast: Context,
+        activityResultLauncher: ActivityResultLauncher<Intent>,
+    ): ActivityResultLauncher<String> {
+        val cameraLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted: Boolean ->
+                stateCameraPermissions.value = isGranted
+                if (isGranted) {
+                    val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                    cameraIntent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, 60)
+                    activityResultLauncher.launch(cameraIntent)
+                } else {
+                    Toast.makeText(
+                        contextToast,
+                        "Разрешение не получено",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+            }
+        )
+        return cameraLauncher
+    }
+
+
+    fun textRecognized(
+        stateImage: Bitmap,
+        sateTextOrRecognized: MutableState<String>,
+        contextToast: Context,
+        regex: String
+
+    ) {
+        val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+        val image = stateImage.let { InputImage.fromBitmap(it, 0) }
+        if (image != null) {
+            // Запускаем процесс обнаружения текста
+            textRecognizer.process(image)
+                .addOnSuccessListener { visionText ->
+                    val textBlocks = visionText.textBlocks
+                    if (textBlocks.isNotEmpty()) {
+                        // Проверяем каждый текстовый блок на наличие идентификатора
+                        val containsId = textBlocks.any { block ->
+                            val idRegex = Regex(regex)
+                            //"\\bID\\d+\\b"
+                            block.text.matches(regex = idRegex)
+                        }
+                        if (containsId) {
+                            val foundText = textBlocks.joinToString(separator = "\n") { it.text }
+                            val foundId = patternIdText(foundText, regex)
+                            if (foundId != null) {
+                                sateTextOrRecognized.value = foundId
+                                Toast.makeText(
+                                    contextToast,
+                                    "Идентификатор найден",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                            }
+                        } else {
+                            Toast.makeText(
+                                contextToast,
+                                "Идентификатор не найден",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else {
+                        Toast.makeText(contextToast, "Текст не обнаружен", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+                .addOnFailureListener { e ->
+                    // Обработка ошибки обнаружения текста
+                    Log.e(TAG, "Ошибка при обнаружении текста: ${e.message}", e)
+                }
+        } else {
+            Toast.makeText(contextToast, "Пустое изображение", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun patternIdText(
+        recognizedText: String,
+        regex: String,
+    ): String? {
+        val idRegex = Regex(regex)
+        val matchResult = idRegex.find(recognizedText)
+        return matchResult?.value
+    }
+
+  fun createData(email:String,password:String, contextToast: Context){
+      FirebaseAuth.getInstance().
+      createUserWithEmailAndPassword(email,password)
+          .addOnCompleteListener {
+           Toast.makeText(contextToast,"Успешно ${it.isSuccessful}",Toast.LENGTH_LONG).show()
+          }.addOnFailureListener{
+              Toast.makeText(contextToast,"Провал ${it.message}",Toast.LENGTH_LONG).show()
+              Toast.makeText(contextToast,"Провал ${it.localizedMessage}",Toast.LENGTH_LONG).show()
+
+          }
+  }
+    fun registerUser(auth: FirebaseAuth, firestore: FirebaseFirestore, storage: FirebaseStorage, context: Context,
+                     name: String,
+                     surname: String,
+                     login:String,
+                     email: String,
+                     password: String,
+                     imageUri: Uri?,
+                     documentName : String) {
+
+      auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val userId = auth.currentUser?.uid
+                    if (userId != null) {
+                        val userData = mapOf(
+                            "name" to name,
+                            "surname" to surname,
+                            "email" to email,
+                            "login" to login,
+                            "password" to password,
+                            "image" to imageUri
+                            // Другие поля данных пользователя
+                            // ...
+                        )
+                        firestore.collection(documentName).document(userId)
+                            .set(userData)
+                            .addOnSuccessListener {
+                                Toast.makeText(context, "вы успешно зарегистрированны", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(context, "Ошибка: ${e.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        if (imageUri != null) {
+                            val imageRef = storage.reference.child("images/${userId}/profile.jpg")
+                            imageRef.putFile(imageUri)
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, "Картинка успешео загруженна", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(context, "Ошибка : ${e.message}", Toast.LENGTH_SHORT).show()
+                                }
+                        }
+                    } else {
+                        Toast.makeText(context, "Error getting user ID", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(context, "Ошибка при регитсрации: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+
+
+    }
+
+
+
+
+
+
+
+

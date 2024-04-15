@@ -1,8 +1,14 @@
 package com.example.diplom1.uiComponets
 
+import Logical.LogicalRegistrations.LogicalRegistrations
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -54,8 +60,10 @@ import sence.kate.practica3.padding.Padding
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.TextUnit
-import screen.registrationsClueText
+
+import java.util.concurrent.ExecutorService
 
 
 class ComponetsRegistrations {
@@ -131,9 +139,7 @@ class ComponetsRegistrations {
         viewModel: RegistrationViewModel,
         sizeAddImage: Dp,
         colorImageTrue: Color,
-
-
-        ) {
+    ) {
 
         val photoPicker = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
@@ -280,7 +286,7 @@ class ComponetsRegistrations {
                 cursorColor = registrationViewModel.textLabelColorClick.value,
 
                 ),
-            )
+        )
 
     }
 
@@ -295,7 +301,8 @@ class ComponetsRegistrations {
         labelText: Int,
         paddingTop: Dp,
         paddingEnd: Dp,
-        paddingStart: Dp
+        paddingStart: Dp,
+        enabled: Boolean
     ) {
         androidx.compose.material3.Button(
             modifier = Modifier
@@ -304,7 +311,10 @@ class ComponetsRegistrations {
                 .padding(paddingStart, paddingTop, paddingEnd),
             colors = ButtonDefaults.buttonColors(buttonColor),
             onClick = {
-            }
+
+            },
+            enabled = enabled,
+
         ) {
             Text(
                 text = stringResource(labelText),
@@ -318,55 +328,230 @@ class ComponetsRegistrations {
     }
 
 
+    @SuppressLint("UnrememberedMutableState")
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun DataPicker(
-        registrationViewModel:RegistrationViewModel,
-        size:Dp
-     ){
-     IconButton( modifier =
-    Modifier
-        .size(size)
-        .clip(CircleShape),
-         onClick = {
-             registrationViewModel.openDateDialog.value=true
-         },) {
+        registrationViewModel: RegistrationViewModel,
+        size: Dp
+    ) {
+        IconButton(
+            modifier =
+            Modifier
+                .size(size)
+                .clip(CircleShape),
+            onClick = {
+                registrationViewModel.openDateDialog.value = true
+            },
+        ) {
 
-        Icon(
-            imageVector = Icons.Default.DateRange,
-            contentDescription = "Add image",
-            modifier = Modifier
-                .size(size),
-            tint = (colorOlivical),
-        )
-    }
-        if(registrationViewModel.openDateDialog.value){
+            Icon(
+                imageVector = Icons.Default.DateRange,
+                contentDescription = "Add image",
+                modifier = Modifier
+                    .size(size),
+                tint = (colorOlivical),
+            )
+        }
+        if (registrationViewModel.openDateDialog.value) {
             val dataPickerState = rememberDatePickerState()
-            val confirmEnabled = derivedStateOf{ dataPickerState.selectedDateMillis != null}
+            val confirmEnabled = derivedStateOf { dataPickerState.selectedDateMillis != null }
             DatePickerDialog(
-                onDismissRequest = { registrationViewModel.openDateDialog.value= false },
+                onDismissRequest = { registrationViewModel.openDateDialog.value = false },
                 confirmButton = {
 
-                    TextButton(onClick = {
-                        registrationViewModel.openDateDialog.value = false
-                        var date = "no Selections"
-                        if(dataPickerState.selectedDateMillis != null){
-                            date = registrationsClueText.convertLongToTime(dataPickerState.selectedDateMillis!!)
-                        }
-                        registrationViewModel.birthday.value= date
-                    },
+                    TextButton(
+                        onClick = {
+                            registrationViewModel.openDateDialog.value = false
+                            var date = "no Selections"
+                            if (dataPickerState.selectedDateMillis != null) {
+                                date =
+                                    registrationViewModel.convertLongToTime(dataPickerState.selectedDateMillis!!)
+                            }
+                            registrationViewModel.birthday.value = date
+                        },
                         enabled = confirmEnabled.value
                     ) {
                         Text(text = "Okay")
                     }
-                }){
-                DatePicker(state = dataPickerState )
+                }) {
+                DatePicker(state = dataPickerState)
 
             }
 
         }
     }
+
+    @Composable
+    fun TextRecognizedOrCamera(
+        registrationViewModel: RegistrationViewModel,
+        state: MutableState<String>,
+        wight: Dp,
+        height: Dp,
+        label: Int,
+        paddingStart: Dp,
+        paddingTop: Dp,
+        paddingEnd: Dp,
+        paddingBottom: Dp,
+        contextToast: Context,
+        background: Color,
+        labelColor: MutableState<Color>,
+        clueText: Int,
+        clueColor: Color,
+        iconBittonSize: Dp,
+        icon: ImageVector,
+        iconColor: Color,
+        staTextOrReognezed: MutableState<String>,
+        stateImage: MutableState<Bitmap?>,
+        stateOrPermissions: MutableState<Boolean>,
+        regex: String,
+        actions:()->Unit,
+
+    ) {
+
+        TextField(
+            registrationViewModel = registrationViewModel,
+            state = state,
+            wight = wight,
+            height = height,
+            label = label,
+            paddingStart = paddingStart,
+            paddingTop = paddingTop,
+            paddingEnd = paddingEnd,
+            paddingBottom = paddingBottom,
+            background = background,
+            labelColor = labelColor,
+            clueText = clueText,
+            clueColor = clueColor,
+            onDoneAction = { actions() }) {
+
         }
+        val takePicture = LogicalRegistrations().imageLauncherRecognizedText(
+            stateImage = stateImage,
+            contextToast = contextToast,
+            stateOrRecognized = staTextOrReognezed,
+            regex =regex ,
+        )
+        val cameraPermissions = LogicalRegistrations().cameraPermission(
+            stateCameraPermissions = stateOrPermissions,
+            contextToast = contextToast,
+            activityResultLauncher = takePicture,
+
+        )
+        IconButton(
+            size = iconBittonSize,
+            icon = icon,
+            iconColor = iconColor,
+        ) {
+            cameraPermissions.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    @Composable
+    fun FaceDetectionsID(
+        iconBittonSize: Dp,
+        icon: ImageVector,
+        iconColor: Color,
+        stateOrPermissions: MutableState<Boolean>,
+        contextToast: Context,
+        stateImage: MutableState<Bitmap?>,
+        stateFaceDetection: MutableState<Boolean>,
+        text: MutableState<String>,
+        colorText:MutableState<Color>,
+
+    ) {
+        val takePicture = LogicalRegistrations().imageLauncherFaceDetections(
+            stateImage = stateImage,
+            contextToast = contextToast,
+            stateFaceDetected = stateFaceDetection,
+            text=text
+        )
+        val cameraPermissions = LogicalRegistrations().cameraPermission(
+            stateCameraPermissions = stateOrPermissions,
+            contextToast = contextToast,
+            activityResultLauncher = takePicture,
+
+
+        )
+        Text(text = text.value,
+            color = colorText.value,
+            style = TextStyle(
+                fontSize = Padding.textLabelSize,
+                fontWeight = FontWeight.Bold,))
+        IconButton(
+            size = iconBittonSize,
+            icon = icon,
+            iconColor = iconColor,
+        ) {
+            cameraPermissions.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    @Composable
+    fun FaceDetectionsPhoto(
+        iconBittonSize: Dp,
+        icon: ImageVector,
+        iconColor: Color,
+        stateOrPermissions: MutableState<Boolean>,
+        contextToast: Context,
+        stateImage: MutableState<Bitmap?>,
+        stateFaceDetection: MutableState<Boolean>,
+        text: MutableState<String>,
+        colorText:MutableState<Color>,
+    ) {
+        val takePicture = LogicalRegistrations().imageLauncherFaceDetections(
+            stateImage = stateImage,
+            contextToast = contextToast,
+            stateFaceDetected = stateFaceDetection,
+            text=text
+        )
+        val cameraPermissions = LogicalRegistrations().cameraPermission(
+            stateCameraPermissions = stateOrPermissions,
+            contextToast = contextToast,
+            activityResultLauncher = takePicture,
+
+        )
+        Text(text = text.value,
+            color = colorText.value,
+            style = TextStyle(
+                fontSize = Padding.textLabelSize,
+                fontWeight = FontWeight.Bold,))
+        IconButton(
+            size = iconBittonSize,
+            icon = icon,
+            iconColor = iconColor,
+        ) {
+            cameraPermissions.launch(Manifest.permission.CAMERA)
+        }
+    }
+    @Composable
+    fun IconButton(
+        size: Dp,
+        icon: ImageVector,
+        iconColor: Color,
+        onClick: () -> Unit
+    ) {
+        IconButton(
+            modifier =
+            Modifier
+                .size(size),
+            onClick = {
+                onClick()
+            },
+        ) {
+
+            Icon(
+                imageVector = icon,
+                contentDescription = "Add image",
+                modifier = Modifier
+                    .size(size),
+                tint = (iconColor),
+            )
+        }
+    }
+
+}
+
 
 
 

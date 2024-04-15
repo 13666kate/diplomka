@@ -6,6 +6,8 @@
     <string name="LastName">Фамилия</string>
     <string name="Number">Номер телефона</string>
     <string name="DateBirthday">Дата Рождения</string>
+    <string name="IdCard">Номер пасспорта(ID)</string>
+    <string name="PinCard">идентификационный номер </string>
 
 
     <string name="FestName">Имя</string>
@@ -19,6 +21,8 @@
     <string name="FestNameClue">Ломан</string>
     <string name="NumberClue">+996703271641</string>
     <string name="DateBirthdayClue">02/10/1992</string>
+    <string name="IDCardClue">ID1558693</string>
+    <string name="PinCardClue">12345678912345</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
