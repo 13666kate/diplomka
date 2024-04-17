@@ -76,7 +76,7 @@ dependencies {
     //для распознавания лиц
     implementation("com.google.mlkit:face-detection:16.1.6")
     //для распознавания лиц
-    //база Firebase
+    //база FirebaseФ
     implementation("com.google.firebase:firebase-auth:22.3.1")
     implementation("com.google.firebase:firebase-database:20.3.1")
     implementation("com.google.firebase:firebase-firestore:24.11.1")

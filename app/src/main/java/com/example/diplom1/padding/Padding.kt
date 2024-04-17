@@ -18,7 +18,7 @@ object Padding {
     val widthOutlineRegistrationScreen = 300.dp
     val heightOutlineRegistrationsScreen = 60.dp
     val widthButtonRegistrationScreen = 270.dp
-    val heightButtonRegistrationScreen = 65.dp
+    val heightButtonRegistrationScreen = 90.dp
 
     val heightImageRegistrationScreen = 170.dp
     val wightImageRegistrationScreen = 170.dp
@@ -36,6 +36,8 @@ object Padding {
     val tvelv = 12.dp
     val textTopRegistration = 190.dp
 
+    val refleshSize = 50.dp
     val textLabelSize= 15.sp
+    val logoSize= 70.dp
     val textSize = 15.sp
 }

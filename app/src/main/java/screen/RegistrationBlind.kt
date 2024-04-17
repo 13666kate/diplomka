@@ -1,19 +1,23 @@
+@file:Suppress("UNUSED_EXPRESSION")
+
 package screen
 
 import Logical.LogicalRegistrations.LogicalRegistrations
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.diplom1.R
@@ -31,21 +36,56 @@ import com.example.diplom1.uiComponets.ComponetsRegistrations
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import firebase.FirebaseRegistrations
 import sence.kate.practica3.padding.Padding
 import viewModel.RegistrationViewModel
 
 val componetsRegistrations = ComponetsRegistrations()
-val auth = FirebaseAuth.getInstance()
+
 val firestore = FirebaseFirestore.getInstance()
 val storage = FirebaseStorage.getInstance()
 
 @Composable
 fun RegistrationBlind(
     registrationViewModel: RegistrationViewModel,
-    onClick: () -> Unit,
+    onClickNavigate:()-> Unit,
     context: Context,
 ) {
+    val clueLogin = registrationViewModel.clueLogin(
+        textEmail = registrationViewModel.login,
+        textColor = registrationViewModel.textColorLogin
+    )
 
+    val cluePassword = registrationViewModel.cluePassword(
+        registrationViewModel.password,
+        registrationViewModel.textColorPassword
+    )
+    val clueName = registrationViewModel.clueLastName(
+        registrationViewModel.festName,
+        registrationViewModel.textColorLabelFestName
+    )
+    val clueSurname = registrationViewModel.clueLastName(
+        registrationViewModel.lastName,
+        registrationViewModel.textColorLabelLastName
+    )
+    val clueEmail = registrationViewModel.clueEmail(
+        registrationViewModel.email,
+        registrationViewModel.textColorLabelEmail
+    )
+    val clueNumber = registrationViewModel.clueNumber(
+        registrationViewModel.number,
+        registrationViewModel.textColorLabelNumber
+    )
+    val clueDate = registrationViewModel.clueDate(
+        registrationViewModel.birthday,
+        registrationViewModel.textLabelColorDate
+    )
+
+    val clueIdCard = registrationViewModel.clueIdCard(
+        state = registrationViewModel.textOrRecognezedId,
+        textColorIdCard = registrationViewModel.textLabelColorIDCard
+    )
+    val cluePinCard = registrationViewModel.cluePinCard()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -85,10 +125,7 @@ fun RegistrationBlind(
                 picker = {},
                 clueColor = Grey,
                 onDoneAction = {
-                    registrationViewModel.clueLastName(
-                        registrationViewModel.festName,
-                        registrationViewModel.textColorLabelFestName
-                    )
+                    clueName
                 }
             )
             componetsRegistrations.TextField(
@@ -108,10 +145,7 @@ fun RegistrationBlind(
                 picker = {},
                 clueColor = Grey,
                 onDoneAction = {
-                    registrationViewModel.clueLastName(
-                        registrationViewModel.lastName,
-                        registrationViewModel.textColorLabelLastName
-                    )
+                    clueSurname
                 }
             )
             componetsRegistrations.TextField(
@@ -131,11 +165,7 @@ fun RegistrationBlind(
                 clueColor = Grey,
                 picker = {},
                 onDoneAction = {
-
-                    registrationViewModel.clueLogin(
-                        textEmail = registrationViewModel.login,
-                        textColor = registrationViewModel.textColorLogin
-                    )
+                    clueLogin
                 }
             )
         }
@@ -156,10 +186,7 @@ fun RegistrationBlind(
             clueColor = Grey,
             picker = {},
             onDoneAction = {
-                registrationViewModel.cluePassword(
-                    registrationViewModel.password,
-                    registrationViewModel.textColorPassword
-                )
+                cluePassword
             }
         )
         componetsRegistrations.TextField(
@@ -179,10 +206,7 @@ fun RegistrationBlind(
             clueColor = Grey,
             picker = {},
             onDoneAction = {
-                registrationViewModel.clueEmail(
-                    registrationViewModel.email,
-                    registrationViewModel.textColorLabelEmail
-                )
+                clueEmail
             }
         )
         componetsRegistrations.TextField(
@@ -202,10 +226,7 @@ fun RegistrationBlind(
             clueColor = Grey,
             picker = {},
             onDoneAction = {
-                registrationViewModel.clueNumber(
-                    registrationViewModel.number,
-                    registrationViewModel.textColorLabelNumber
-                )
+                clueNumber
             })
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -229,10 +250,7 @@ fun RegistrationBlind(
                 clueColor = Grey,
                 picker = {},
                 onDoneAction = {
-                    registrationViewModel.clueDate(
-                        registrationViewModel.birthday,
-                        registrationViewModel.textLabelColorDate
-                    )
+                    clueDate
 
                 })
             componetsRegistrations.DataPicker(
@@ -268,10 +286,7 @@ fun RegistrationBlind(
                 stateOrPermissions = registrationViewModel.isCameraPermission,
                 regex = "\\bID\\d+\\b",
                 actions = {
-                    registrationViewModel.clueIdCard(
-                        state = registrationViewModel.textOrRecognezedId,
-                        textColorIdCard = registrationViewModel.textLabelColorIDCard
-                    )
+                    clueIdCard
                 }
             )
         }
@@ -303,50 +318,70 @@ fun RegistrationBlind(
                 stateOrPermissions = registrationViewModel.isCameraPermission,
                 regex = """^\d{14}$""",
                 actions = {
-                    registrationViewModel.cluePinCard()
+                    cluePinCard
                 }
             )
         }
-        componetsRegistrations.Button(
 
+        if (clueLogin && cluePassword && clueDate && clueEmail &&
+            clueName && clueSurname && clueNumber && clueIdCard && cluePinCard
+        ) {
+            registrationViewModel.isButtonEnabled.value = true
+            registrationViewModel.colorEnabledValueButtonRegistrations.value
+        }
+
+        Button(
             onClick = {
+              onClickNavigate()
                 val auth = FirebaseAuth.getInstance()
-
                 try {
-
-
-                          registrationViewModel.isButtonEnabled.value = true
-                        LogicalRegistrations().registerUser(
-                            auth = auth,
-                            firestore = firestore,
-                            storage = storage,
-                            context = context,
-                            name = registrationViewModel.festName.value,
-                            surname = registrationViewModel.lastName.value,
-                            email = registrationViewModel.email.value,
-                            password = registrationViewModel.password.value,
-                            imageUri = registrationViewModel.imageUriState.value,
-                            login = registrationViewModel.login.value,
-                            documentName = "usersBlind"
-
-                        )
-
+                    FirebaseRegistrations().registerUser(
+                        auth = auth,
+                        firestore = firestore,
+                        storage = storage,
+                        context = context,
+                        name = registrationViewModel.festName.value,
+                        surname = registrationViewModel.lastName.value,
+                        email = registrationViewModel.email.value,
+                        password = registrationViewModel.password.value,
+                        imageUri = registrationViewModel.imageUriState.value,
+                        login = registrationViewModel.login.value,
+                        documentName = "usersBlind",
+                        pinCard = registrationViewModel.textOrRecognezedPin.value,
+                        idCard = registrationViewModel.textOrRecognezedId.value,
+                        registrationViewModel = registrationViewModel,
+                        birdhday = registrationViewModel.birthday.value
+                    )
+                    registrationViewModel.isButtonEnabled.value = true
 
                 } catch (e: Exception) {
                     Log.e(TAG, "Ошибка ${e.message}")
                 }
-            },
-            wight = Padding.widthButtonLoginScreen,
-            height = Padding.heightButtonLoginScreen,
-            buttonColor = colorOlivical,
-            textSize = Padding.textSize,
-            textColor = Color.DarkGray,
-            labelText = R.string.registrarions,
-            paddingTop = Padding.tvelv,
-            paddingEnd = Padding.paddingNormalTen,
-            paddingStart = Padding.paddingNormalTen,
-            enabled =  registrationViewModel.isButtonEnabled.value
+
+            }, modifier = Modifier
+                .width
+                    (Padding.widthButtonLoginScreen)
+                .height(Padding.heightButtonRegistrationScreen)
+                .padding(
+                    Padding.paddingNormalTen,
+                    Padding.tvelv,
+                    Padding.paddingNormalTen,
+                    Padding.paddingSmall
+                ),
+            enabled = registrationViewModel.isButtonEnabled.value,
+            colors = ButtonDefaults.buttonColors(registrationViewModel.colorEnabledValueButtonRegistrations.value)
         )
+        {
+            Text(
+                text = "Вход",
+                color = BlueBlack,
+                fontSize = Padding.textSize,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+
+        // enabled = registrationViewModel.isButtonEnabled.value,)
 
 
         //  Toast.makeText(context,"Успешно ", Toast.LENGTH_SHORT).show()
@@ -388,6 +423,7 @@ fun RegistrationBlind(
          }*/
     }
 }
+
 
 
 

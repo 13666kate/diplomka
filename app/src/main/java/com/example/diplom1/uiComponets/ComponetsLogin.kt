@@ -45,6 +45,7 @@ class ComponetsLogin {
         viewModel: LoginViewModel,
         state: MutableState<String>,
         modifier: Modifier = Modifier,
+        colorOutline:MutableState<Color>,
         wight: Dp,
         height: Dp,
         padding: Dp,
@@ -79,7 +80,7 @@ class ComponetsLogin {
                 imeAction = ImeAction.Done, keyboardType = KeyboardType.Email
             ),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                unfocusedBorderColor = viewModel.textLabelColor.value,
+                unfocusedBorderColor = colorOutline.value,
                 focusedBorderColor = viewModel.textLabelColorClick.value,
                 focusedLabelColor = viewModel.textLabelColorClick.value,
                 cursorColor = viewModel.textLabelColorClick.value
@@ -128,20 +129,22 @@ class ComponetsLogin {
         paddingStart: Dp,
         paddingTop: Dp,
         paddingEnd: Dp,
-        //onClick: () -> Unit
+        onClick: () -> Unit
     ) {
         Text(
-
             text = stringResource(labelText),
             modifier = Modifier
                 .padding(paddingStart, paddingTop, paddingEnd)
-                .clickable { viewModel.setTextColor() },
+                .clickable {
+                    viewModel.setTextColor()
+                    onClick()},
             style = TextStyle(
                 color = viewModel.textColor.value,
                 fontSize = textSize,
                 fontFamily = FontFamily(Font(R.font.registration, FontWeight.Bold)),
                 textAlign = TextAlign.Center
             )
+
         )
 
     }
