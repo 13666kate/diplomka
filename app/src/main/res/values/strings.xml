@@ -12,7 +12,18 @@
 
     <string name="FestName">Имя</string>
     <string name="Vfod">Вход</string>
+    //Buttons
     <string name="registrarions">Eще не зарегистрированны? Регистрация</string>
+    <string name="userBlind">Пользователь</string>
+    <string name="userVolonter">Волонтер</string>
+    <string name="ErrorPassword">Неверный пароль</string>
+
+    //ToastText
+    <string name="SucsesfulRegistrations">Вы успешно зарегистрированы!</string>
+
+    //Text
+    <string name="noRegistrations">Вы не зарегистрированны!</string>
+
 
     <string name="EmailClue">madrid.1@gmail.com</string>
     <string name="PasswordlClue">mAdrid123</string>

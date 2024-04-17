@@ -63,8 +63,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.TextUnit
 
-import java.util.concurrent.ExecutorService
-
 
 class ComponetsRegistrations {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -274,7 +272,7 @@ class ComponetsRegistrations {
             },
             placeholder = {
                 Text(
-                    stringResource(id = clueText),
+                    text = stringResource(id = clueText),
                     color = clueColor,
                 )
             },
@@ -302,7 +300,7 @@ class ComponetsRegistrations {
         paddingTop: Dp,
         paddingEnd: Dp,
         paddingStart: Dp,
-        enabled: Boolean
+      //  enabled: Boolean
     ) {
         androidx.compose.material3.Button(
             modifier = Modifier
@@ -313,7 +311,7 @@ class ComponetsRegistrations {
             onClick = {
 
             },
-            enabled = enabled,
+          //  enabled = enabled,
 
         ) {
             Text(

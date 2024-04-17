@@ -30,6 +30,7 @@ import viewModel.RegistrationViewModel
 
 public class LogicalRegistrations() {
 
+
     @Composable
     fun imageLauncherRecognizedText(
         stateImage: MutableState<Bitmap?>,
@@ -206,7 +207,6 @@ public class LogicalRegistrations() {
                         // Проверяем каждый текстовый блок на наличие идентификатора
                         val containsId = textBlocks.any { block ->
                             val idRegex = Regex(regex)
-                            //"\\bID\\d+\\b"
                             block.text.matches(regex = idRegex)
                         }
                         if (containsId) {
@@ -251,71 +251,12 @@ public class LogicalRegistrations() {
         return matchResult?.value
     }
 
-  fun createData(email:String,password:String, contextToast: Context){
-      FirebaseAuth.getInstance().
-      createUserWithEmailAndPassword(email,password)
-          .addOnCompleteListener {
-           Toast.makeText(contextToast,"Успешно ${it.isSuccessful}",Toast.LENGTH_LONG).show()
-          }.addOnFailureListener{
-              Toast.makeText(contextToast,"Провал ${it.message}",Toast.LENGTH_LONG).show()
-              Toast.makeText(contextToast,"Провал ${it.localizedMessage}",Toast.LENGTH_LONG).show()
 
-          }
-  }
-    fun registerUser(auth: FirebaseAuth, firestore: FirebaseFirestore, storage: FirebaseStorage, context: Context,
-                     name: String,
-                     surname: String,
-                     login:String,
-                     email: String,
-                     password: String,
-                     imageUri: Uri?,
-                     documentName : String) {
-
-      auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val userId = auth.currentUser?.uid
-                    if (userId != null) {
-                        val userData = mapOf(
-                            "name" to name,
-                            "surname" to surname,
-                            "email" to email,
-                            "login" to login,
-                            "password" to password,
-                            "image" to imageUri
-                            // Другие поля данных пользователя
-                            // ...
-                        )
-                        firestore.collection(documentName).document(userId)
-                            .set(userData)
-                            .addOnSuccessListener {
-                                Toast.makeText(context, "вы успешно зарегистрированны", Toast.LENGTH_SHORT).show()
-                            }
-                            .addOnFailureListener { e ->
-                                Toast.makeText(context, "Ошибка: ${e.message}", Toast.LENGTH_SHORT).show()
-                            }
-                        if (imageUri != null) {
-                            val imageRef = storage.reference.child("images/${userId}/profile.jpg")
-                            imageRef.putFile(imageUri)
-                                .addOnSuccessListener {
-                                    Toast.makeText(context, "Картинка успешео загруженна", Toast.LENGTH_SHORT).show()
-                                }
-                                .addOnFailureListener { e ->
-                                    Toast.makeText(context, "Ошибка : ${e.message}", Toast.LENGTH_SHORT).show()
-                                }
-                        }
-                    } else {
-                        Toast.makeText(context, "Error getting user ID", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(context, "Ошибка при регитсрации: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
-    }
+}
 
 
 
-    }
+
 
 
 

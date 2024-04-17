@@ -14,6 +14,7 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.diplom1.ui.theme.Black
+import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.Red
 //import com.google.firebase.auth.FirebaseAuth
 //import com.google.firebase.firestore.FirebaseFirestore
@@ -73,6 +74,8 @@ class RegistrationViewModel : ViewModel() {
     var textLabelColorDate: MutableState<Color> = mutableStateOf(Color(colorOlivical.value))
     var textLabelColorIDCard: MutableState<Color> = mutableStateOf(Color(colorOlivical.value))
     var textLabelColorPinCard: MutableState<Color> = mutableStateOf(Color(colorOlivical.value))
+    var colorEnabledValueButtonRegistrations: MutableState<Color> = mutableStateOf(Color(colorOlivical.value))
+    var bagroungColorDiplom: MutableState<Color> = mutableStateOf(BlueBlack)
 
     var textLabelColorClick: MutableState<Color> =
         mutableStateOf(Orange)//устанавливаем цвет при нажатии на ввод
@@ -105,12 +108,13 @@ class RegistrationViewModel : ViewModel() {
         }
     }
 
-    fun cluePinCard() {
+    fun cluePinCard() : Boolean {
         if (textOrRecognezedPin.value.length == 14 && textOrRecognezedPin.value.all { it.isDigit() }) {
             textLabelColorPinCard.value = colorOlivical
+            return true
         } else {
             textLabelColorPinCard.value = Red
-            isButtonEnabled.value = false
+            return false
 
         }
     }
@@ -118,14 +122,15 @@ class RegistrationViewModel : ViewModel() {
     fun clueLogin(
         textEmail: MutableState<String>,
         textColor: MutableState<Color>
-    ) {
+    ):Boolean  {
         var text = textEmail.value
         val containsUpperCase = !text.any { it.isUpperCase() }
         if (textEmail.value.isEmpty() || (textEmail.value.contains(' ') || containsUpperCase)) {
             textColor.value = Red
+            return  false
         } else {
             textColor.value = colorOlivical
-
+          return  true
         }
     }
 
@@ -133,15 +138,17 @@ class RegistrationViewModel : ViewModel() {
     fun cluePassword(
         textPassword: MutableState<String>,
         textColor: MutableState<Color>
-    ) {
+    ):Boolean {
 
         var text = textPassword.value
         val containsNumber = !text.any { it.isDigit() }
         if (textPassword.value.isEmpty() || containsNumber) {
             textColor.value = Red
+            return false
 
         } else {
-            textColor.value = colorOlivical
+           textColor.value = colorOlivical
+            return true
         }
 
     }
@@ -149,15 +156,17 @@ class RegistrationViewModel : ViewModel() {
     fun clueEmail(
         textEmail: MutableState<String>,
         textColor: MutableState<Color>
-    ) {
+    ) :Boolean{
 
         var text = textEmail.value
         val containsNumber = !text.contains('@')
         val endsWithWord = !text.endsWith("@gmail.com")
         if (textEmail.value.isEmpty() || endsWithWord) {
             textColor.value = Red
+            return false
         } else {
             textColor.value = colorOlivical
+            return true
         }
         //registrationViewModel.isButtonEnabled.value = false
     }
@@ -165,7 +174,7 @@ class RegistrationViewModel : ViewModel() {
     fun clueLastName(
         textLastName: MutableState<String>,
         textColor: MutableState<Color>
-    ) {
+    ):Boolean {
 
         var text = textLastName.value
         val containsUpperCase = !text.any { it.isUpperCase() }
@@ -174,9 +183,10 @@ class RegistrationViewModel : ViewModel() {
 
         if (textLastName.value.isEmpty() || containsNumber || containsSymbol || !text[0].isUpperCase()) {
             textColor.value = Red
+            return false
         } else {
-
             textColor.value = colorOlivical
+            return true
         }
         //registrationViewModel.isButtonEnabled.value = false
     }
@@ -184,15 +194,17 @@ class RegistrationViewModel : ViewModel() {
     fun clueNumber(
         textNumber: MutableState<String>,
         textColor: MutableState<Color>
-    ) {
+    ) :Boolean {
 
         var text = textNumber.value
         val isCorrectFormat = checkPhoneNumberFormat(text)
         if (textNumber.value.isEmpty() || !isCorrectFormat) {
             textColor.value = Red
+            return  false
 
         } else {
             textColor.value = colorOlivical
+            return true
 
         }
         //registrationViewModel.isButtonEnabled.value = false
@@ -201,27 +213,31 @@ class RegistrationViewModel : ViewModel() {
     fun clueDate(
         dataState: MutableState<String>,
         textColorDate: MutableState<Color>
-    ) {
+    ):Boolean {
 
         var text = dataState.value
         val isCorrectFormat = checkPhoneNumberFormat(text)
         if (dataState.value.isEmpty() || !isValidDateFormat(text)) {
             textColorDate.value = Red
+            return false
 
         } else {
             textColorDate.value = colorOlivical
-
+            return  true
         }
         //registrationViewModel.isButtonEnabled.value = false
     }
-    fun clueIdCard( state: MutableState<String>,
-                   textColorIdCard: MutableState<Color>){
+    fun clueIdCard(
+        state: MutableState<String>,
+        textColorIdCard: MutableState<Color>):Boolean{
         val regex = "\\bID\\d+\\b".toRegex()
         if(regex.matches(state.value) && state.value.length== 9){
             textColorIdCard.value = colorOlivical
+            return true
 
             }else{
             textColorIdCard.value = Red
+            return false
 
         }
     }
@@ -274,6 +290,19 @@ class RegistrationViewModel : ViewModel() {
         val date = Date(time)
         val format = SimpleDateFormat("d.MM.yyyy")
         return format.format(date)
+    }
+
+    fun cleareState(){
+        login.value = ""
+        password.value=""
+        email.value=""
+        _imageUriState.value = null
+        lastName.value =""
+        festName.value=""
+        birthday.value=""
+        textOrRecognezedId.value=""
+        textOrRecognezedPin.value=""
+        number.value=""
     }
 
 

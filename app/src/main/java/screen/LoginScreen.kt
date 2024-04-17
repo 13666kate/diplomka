@@ -2,6 +2,7 @@
 
 package screen
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,7 +27,9 @@ val componets = ComponetsLogin();
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel,
-    onClick: () -> Unit,
+    onClickRegistrations: () -> Unit,
+    onClickLogin: () -> Unit,
+
 //    id:Int,
 //    navController: NavController
 ){
@@ -56,6 +59,7 @@ fun LoginScreen(
              height = Padding.heightOutlineLoginScreen,
              padding = Padding.paddingNormalTen,
              labelText = R.string.Login,
+             colorOutline = loginViewModel.ColorOtline
 
              )
          componets.OutlineTextField(
@@ -65,6 +69,7 @@ fun LoginScreen(
              height = Padding.heightOutlineLoginScreen,
              padding = Padding.paddingNormalTen,
              labelText = R.string.Password,
+             colorOutline = loginViewModel.ColorOtline,
             )
          componets.Button(
              wight = Padding.widthButtonLoginScreen,
@@ -73,7 +78,9 @@ fun LoginScreen(
              textSize = Padding.textLabelSize,
              textColor = BlueBlack,
              labelText = R.string.Vfod,
-             onClick = {onClick()},
+             onClick = {
+              onClickLogin()
+             },
              paddingStart = Padding.paddingSmall,
              paddingTop = Padding.paddingNormalTen,
              paddingEnd = Padding.paddingSmall,
@@ -84,6 +91,7 @@ fun LoginScreen(
              textSize = Padding.textSize ,
              labelText = R.string.registrarions,
              paddingStart = Padding.tvelv,
+             onClick ={ onClickRegistrations()},
              paddingTop =Padding.textTopRegistration ,
              paddingEnd = Padding.tvelv,
          )
