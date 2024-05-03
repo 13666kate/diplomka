@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -25,7 +26,9 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import viewModel.LoginViewModel
 import viewModel.RegistrationViewModel
+import viewModel.UserType
 
 
 public class LogicalRegistrations() {
@@ -251,6 +254,42 @@ public class LogicalRegistrations() {
         return matchResult?.value
     }
 
+    fun authentifications(context: Context,
+                          navHostController: NavHostController,
+                          userType: UserType,
+                          loginViewModel: LoginViewModel,
+                          nameNavigateHome: String
+    ){
+        try {
+            if (userType.userType.value == true) {
+                loginViewModel.userAuthentication(
+                    email = loginViewModel.login,
+                    password = loginViewModel.Password,
+                    navController = navHostController,
+                    textNoRegistrations = loginViewModel.textAuthenticationsValue,
+                    collectionsFireStore = "usersBlind",
+                    colorOutline = loginViewModel.ColorOtline,
+                    context = context,
+                    nameScreenNavigations = nameNavigateHome,
+                )
+
+            } else {
+                loginViewModel.userAuthentication(
+                    email = loginViewModel.login,
+                    password = loginViewModel.Password,
+                    navController = navHostController,
+                    textNoRegistrations = loginViewModel.textAuthenticationsValue,
+                    collectionsFireStore = "usersVolonters",
+                    colorOutline = loginViewModel.ColorOtline,
+                    context = context,
+                    nameScreenNavigations = nameNavigateHome,
+                )
+
+            }
+        }catch (e:Exception){
+            Log.e("Auth",e.message.toString())
+        }
+    }
 
 }
 

@@ -40,4 +40,6 @@ object Padding {
     val textLabelSize= 15.sp
     val logoSize= 70.dp
     val textSize = 15.sp
+    val textSizeHomeBorderName = 17.sp
+    val textSizeHomeBorderEmail = 15.sp
 }

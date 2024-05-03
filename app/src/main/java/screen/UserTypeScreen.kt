@@ -1,6 +1,8 @@
 @file:Suppress("UNUSED_EXPRESSION")
 package screen
 
+import android.content.Context
+import android.widget.Toast
 import androidx.camera.core.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,12 +38,15 @@ import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.colorOlivical
 import com.google.firebase.annotations.PreviewApi
 import sence.kate.practica3.padding.Padding
+import viewModel.UserType
 
 
 @Composable
 fun UserType(
             onclickButtonTypeBlind:()->Unit,
             onclickButtonTypeVolonter:()->Unit,
+            context:Context,
+            userType: UserType
              ) {
 
     Column(
@@ -58,7 +63,10 @@ fun UserType(
        contentDescription ="add",
        modifier = Modifier
            .size(290.dp))
-        Button(onClick = { onclickButtonTypeBlind() },
+        Button(onClick = {
+            userType.isUsertrue()
+            onclickButtonTypeBlind()
+                         },
             modifier = Modifier
                 .width(Padding.widthButtonLoginScreen,)
                 .height(Padding.heightButtonLoginScreen)
@@ -73,7 +81,12 @@ fun UserType(
           )
 
         }
-        Button(onClick = { onclickButtonTypeVolonter() },
+        Button(onClick = {
+            onclickButtonTypeVolonter()
+            userType.isUserFalse()
+                //Toast.makeText(context, "${UserType().userType.value}", Toast.LENGTH_SHORT).show()
+
+        },
             modifier = Modifier
                 .width(Padding.widthButtonLoginScreen,)
                 .height(Padding.heightButtonLoginScreen)

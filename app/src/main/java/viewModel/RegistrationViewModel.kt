@@ -12,10 +12,21 @@ import com.example.diplom1.ui.theme.colorOlivical
 import com.example.diplom1.ui.theme.Orange
 import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.example.diplom1.ui.theme.Black
 import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.Red
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import firebase.FirebaseRegistrations
+import firebase.NameCollactionFirestore
+import kotlinx.coroutines.launch
+import screen.firestore
+import screen.storage
 //import com.google.firebase.auth.FirebaseAuth
 //import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -76,7 +87,6 @@ class RegistrationViewModel : ViewModel() {
     var textLabelColorPinCard: MutableState<Color> = mutableStateOf(Color(colorOlivical.value))
     var colorEnabledValueButtonRegistrations: MutableState<Color> = mutableStateOf(Color(colorOlivical.value))
     var bagroungColorDiplom: MutableState<Color> = mutableStateOf(BlueBlack)
-
     var textLabelColorClick: MutableState<Color> =
         mutableStateOf(Orange)//устанавливаем цвет при нажатии на ввод
     var textColorDetectionsIdCard: MutableState<Color> =
@@ -88,6 +98,7 @@ class RegistrationViewModel : ViewModel() {
     val imageUriState: State<Uri?> = _imageUriState
     var iconColor: MutableState<Color> = mutableStateOf(Black)
     val isButtonEnabled = mutableStateOf(false)
+    val imageUriString = mutableStateOf("")
     fun setLabelColor(color: Color) {
 
         textColorLogin.value = color
@@ -305,7 +316,45 @@ class RegistrationViewModel : ViewModel() {
         number.value=""
     }
 
+    fun userRegistrations(
+        auth: FirebaseAuth,
+        firestore: FirebaseFirestore,
+        storage: FirebaseStorage,
+        context: Context,
+        name: String,
+        surname: String,
+        login: String,
+        email: String,
+        password: String,
+        imageUri: Uri?,
+        pinCard: String,
+        idCard: String,
+        documentName: String,
+        birdhday: String,
+        phone: String,
+        registrationViewModel: RegistrationViewModel,
 
-
+        ) {
+        viewModelScope.launch() {
+            FirebaseRegistrations().registerUser(
+                auth = auth,
+                firestore = firestore,
+                storage = storage,
+                context = context,
+                name = festName.value,
+                surname = lastName.value,
+                email = email,
+                password = password,
+                imageUri = imageUriState.value,
+                login = login,
+                documentName = NameCollactionFirestore.UsersVolonters,
+                pinCard = textOrRecognezedPin.value,
+                idCard = textOrRecognezedId.value,
+                registrationViewModel = registrationViewModel,
+                birdhday = birthday.value,
+                phone = number.value
+            )
+        }
+    }
 }
 

@@ -2,7 +2,6 @@
 
 package screen
 
-import Logical.LogicalRegistrations.LogicalRegistrations
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
@@ -37,8 +36,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import firebase.FirebaseRegistrations
+import firebase.NameCollactionFirestore
 import sence.kate.practica3.padding.Padding
 import viewModel.RegistrationViewModel
+import viewModel.UserType
 
 val componetsRegistrations = ComponetsRegistrations()
 
@@ -48,8 +49,9 @@ val storage = FirebaseStorage.getInstance()
 @Composable
 fun RegistrationBlind(
     registrationViewModel: RegistrationViewModel,
-    onClickNavigate:()-> Unit,
+    onClickNavigate: () -> Unit,
     context: Context,
+    userType: UserType
 ) {
     val clueLogin = registrationViewModel.clueLogin(
         textEmail = registrationViewModel.login,
@@ -106,7 +108,12 @@ fun RegistrationBlind(
                 size = Padding.sizeImageRegistrationScreen,
                 viewModel = registrationViewModel,
                 sizeAddImage = Padding.iconSizeRegistrationAdd,
-                colorImageTrue = colorOlivical
+                colorImageTrue = colorOlivical,
+                setImageUri = { uri ->
+                    registrationViewModel.setImageUri(uri)
+                },
+                imageUriState = registrationViewModel.imageUriState,
+
             )
             componetsRegistrations.TextField(
                 registrationViewModel = registrationViewModel,
@@ -332,28 +339,50 @@ fun RegistrationBlind(
 
         Button(
             onClick = {
-              onClickNavigate()
+                onClickNavigate()
                 val auth = FirebaseAuth.getInstance()
                 try {
-                    FirebaseRegistrations().registerUser(
-                        auth = auth,
-                        firestore = firestore,
-                        storage = storage,
-                        context = context,
-                        name = registrationViewModel.festName.value,
-                        surname = registrationViewModel.lastName.value,
-                        email = registrationViewModel.email.value,
-                        password = registrationViewModel.password.value,
-                        imageUri = registrationViewModel.imageUriState.value,
-                        login = registrationViewModel.login.value,
-                        documentName = "usersBlind",
-                        pinCard = registrationViewModel.textOrRecognezedPin.value,
-                        idCard = registrationViewModel.textOrRecognezedId.value,
-                        registrationViewModel = registrationViewModel,
-                        birdhday = registrationViewModel.birthday.value
-                    )
-                    registrationViewModel.isButtonEnabled.value = true
-
+                    if(userType.userType.value==true) {
+                        registrationViewModel.userRegistrations(
+                            auth = auth,
+                            firestore = firestore,
+                            storage = storage,
+                            context = context,
+                            name = registrationViewModel.festName.value,
+                            surname = registrationViewModel.lastName.value,
+                            email = registrationViewModel.email.value,
+                            password = registrationViewModel.password.value,
+                            imageUri = registrationViewModel.imageUriState.value,
+                            login = registrationViewModel.login.value,
+                            documentName = NameCollactionFirestore.UsersBlind,
+                            pinCard = registrationViewModel.textOrRecognezedPin.value,
+                            idCard = registrationViewModel.textOrRecognezedId.value,
+                            registrationViewModel = registrationViewModel,
+                            birdhday = registrationViewModel.birthday.value,
+                            phone = registrationViewModel.number.value
+                        )
+                        registrationViewModel.isButtonEnabled.value = true
+                    }else{
+                        registrationViewModel.userRegistrations(
+                            auth = auth,
+                            firestore = firestore,
+                            storage = storage,
+                            context = context,
+                            name = registrationViewModel.festName.value,
+                            surname = registrationViewModel.lastName.value,
+                            email = registrationViewModel.email.value,
+                            password = registrationViewModel.password.value,
+                            imageUri = registrationViewModel.imageUriState.value,
+                            login = registrationViewModel.login.value,
+                            documentName = NameCollactionFirestore.UsersVolonters,
+                            pinCard = registrationViewModel.textOrRecognezedPin.value,
+                            idCard = registrationViewModel.textOrRecognezedId.value,
+                            registrationViewModel = registrationViewModel,
+                            birdhday = registrationViewModel.birthday.value,
+                            phone = registrationViewModel.number.value
+                        )
+                        registrationViewModel.isButtonEnabled.value = true
+                    }
                 } catch (e: Exception) {
                     Log.e(TAG, "Ошибка ${e.message}")
                 }

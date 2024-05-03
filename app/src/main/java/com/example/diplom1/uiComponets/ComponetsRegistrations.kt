@@ -5,6 +5,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -59,6 +60,7 @@ import com.example.diplom1.ui.theme.Orange
 import sence.kate.practica3.padding.Padding
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.TextUnit
@@ -137,12 +139,15 @@ class ComponetsRegistrations {
         viewModel: RegistrationViewModel,
         sizeAddImage: Dp,
         colorImageTrue: Color,
+        setImageUri: (Uri?) -> Unit,
+        imageUriState: State<Uri?>
+
     ) {
 
         val photoPicker = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
             onResult = { uri ->
-                viewModel.setImageUri(uri)
+                setImageUri(uri)
             }
         )
         Box(
@@ -166,7 +171,10 @@ class ComponetsRegistrations {
                 IconButton(
                     onClick = {
                         photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                        viewModel.setIconImage(viewModel.imageUriState.value);
+                        viewModel.setIconImage(imageUriState.value);
+
+                     //   setIconImage(uriImage.value)
+
                     },
                     modifier = Modifier
                         .size(size)
@@ -185,7 +193,7 @@ class ComponetsRegistrations {
                         tint = (colorOlivical),
                     )
                     AsyncImage(
-                        model = viewModel.imageUriState.value,
+                        model = imageUriState.value,
                         contentDescription = " Add image",
                         modifier = Modifier
                             .clip(CircleShape)

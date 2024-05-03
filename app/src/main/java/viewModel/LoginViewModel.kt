@@ -52,7 +52,8 @@ class LoginViewModel : ViewModel() {
         collectionsFireStore: String,
         colorOutline: MutableState<Color>,
         context: Context,
-        nameScreenNavigations: String
+        nameScreenNavigations: String,
+       // homeScreenViewModel: HomeScreenViewModel,
 
     ) {
         viewModelScope.launch() {
@@ -61,10 +62,11 @@ class LoginViewModel : ViewModel() {
                 password = password.value,
                 navController = navController,
                 textNoRegistrations = textNoRegistrations,
-                collectionsFireStore = "usersBlind",
+                collectionsFireStore = collectionsFireStore,
                 colorOutline = colorOutline,
                 context = context,
-                nameScreenNavigations = nameScreenNavigations
+                nameScreenNavigations = nameScreenNavigations,
+                //homeScreenViewModel = homeScreenViewModel
             )
         }
 

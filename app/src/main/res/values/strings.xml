@@ -20,9 +20,26 @@
 
     //ToastText
     <string name="SucsesfulRegistrations">Вы успешно зарегистрированы!</string>
+    <string name="NoAcсount">Аккаунта не существует! </string>
+    <string name="NoPassword">Неверный логин или пароль! </string>
 
     //Text
     <string name="noRegistrations">Вы не зарегистрированны!</string>
+
+    //Error
+    <string name="ErrorRegistrations">Ошибка при регистрации</string>
+
+
+    //FireSrore
+    <string name="name">name</string>
+    <string name="surname">surname</string>
+    <string name="email">email</string>
+    <string name="login">login</string>
+    <string name="password">password</string>
+    <string name="image">image</string>
+    <string name="pinCard">pinCard</string>
+    <string name="idCard">idCard</string>
+    <string name="birdhday">birdhday</string>
 
 
     <string name="EmailClue">madrid.1@gmail.com</string>

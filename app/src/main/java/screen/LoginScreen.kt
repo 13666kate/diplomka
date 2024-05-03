@@ -3,6 +3,8 @@
 package screen
 
 import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,14 +15,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.diplom1.R
 import com.example.diplom1.uiComponets.ComponetsLogin
 import viewModel.LoginViewModel
 import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.colorOlivical
+import firebase.FirebaseRegistrations
 import sence.kate.practica3.padding.Padding
+import viewModel.UserType
 
 val componets = ComponetsLogin();
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,11 +34,11 @@ fun LoginScreen(
     onClickRegistrations: () -> Unit,
     onClickLogin: () -> Unit,
 
-//    id:Int,
-//    navController: NavController
+    //nameNavagateHome:String
 ){
+    //val navController = rememberNavController()
      val scope = rememberCoroutineScope()
-    val context = LocalContext.current
+ //   val context = LocalContext.current
      Column(
          modifier = Modifier
              .fillMaxSize()
@@ -54,7 +58,7 @@ fun LoginScreen(
 
          componets.OutlineTextField(
              viewModel = loginViewModel,
-            loginViewModel.login,
+             state =  loginViewModel.login,
              wight = Padding.widthOutlineLoginScreen,
              height = Padding.heightOutlineLoginScreen,
              padding = Padding.paddingNormalTen,
@@ -64,7 +68,7 @@ fun LoginScreen(
              )
          componets.OutlineTextField(
              viewModel =loginViewModel,
-             loginViewModel.Password,
+             state = loginViewModel.Password,
              wight = Padding.widthOutlineLoginScreen,
              height = Padding.heightOutlineLoginScreen,
              padding = Padding.paddingNormalTen,
@@ -79,8 +83,9 @@ fun LoginScreen(
              textColor = BlueBlack,
              labelText = R.string.Vfod,
              onClick = {
-              onClickLogin()
-             },
+                    onClickLogin()
+
+                     },
              paddingStart = Padding.paddingSmall,
              paddingTop = Padding.paddingNormalTen,
              paddingEnd = Padding.paddingSmall,
@@ -97,3 +102,4 @@ fun LoginScreen(
          )
      }
 }
+
