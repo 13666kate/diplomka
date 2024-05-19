@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Region
 
 import android.net.Uri
 import android.util.Log
@@ -14,9 +15,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import com.example.diplom1.R
+import com.example.diplom1.ShedPreferences
 import com.example.diplom1.ui.theme.Red
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -24,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import viewModel.HomeScreenViewModel
+import viewModel.LoginViewModel
 import viewModel.RegistrationViewModel
 import viewModel.UserType
 
@@ -45,6 +47,13 @@ class FirebaseRegistrations {
         documentName: String,
         birdhday: String,
         phone: String,
+        statusInvalid:String,
+        aboutMe:String,
+        organizationVolonter:String,
+        region: String,
+        rayon:String,
+        adress:String,
+        volonterExperience:String,
         registrationViewModel: RegistrationViewModel,
     ) {
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
@@ -62,7 +71,14 @@ class FirebaseRegistrations {
                             FirebaseString.pinCard to pinCard,
                             FirebaseString.idCard to idCard,
                             FirebaseString.birdhday to birdhday,
-                            FirebaseString.phone to phone
+                            FirebaseString.phone to phone,
+                            FirebaseString.statusInvalid to statusInvalid,
+                            FirebaseString.aboutMe to aboutMe,
+                            FirebaseString.organization to organizationVolonter,
+                            FirebaseString.adress to adress,
+                            FirebaseString.experience to volonterExperience,
+                            FirebaseString.region to region,
+                            FirebaseString.rayon to rayon,
                         )
                         firestore.collection(documentName).document(userId)
                             .set(userData)
@@ -135,6 +151,13 @@ class FirebaseRegistrations {
                                 val firestorePassword = document.getString(FirebaseString.password)
                                 val firestoreEmail = document.getString(FirebaseString.email)
                                 if (firestoreEmail == email) {
+
+
+                                    /*if (userType.userType.value == true) {
+                                        loginViewModel.saveStstusTrueUser(context)
+                                    }else if (userType.userType.value == false) {
+                                        loginViewModel.saveStstusFasleVolonter( context)
+                                    }*/
                                     navController.navigate(nameScreenNavigations)
 
                                 } else {
@@ -148,26 +171,6 @@ class FirebaseRegistrations {
                             }
 
                         }
-                    /* FirebaseFirestore.getInstance().collection(collectionsFireStore).get()
-                         .addOnSuccessListener { documents ->
-                             for (document in documents) {
-                                 val registrationsUserPassword = document.getString("password")
-                                 val registrationsUserEmail = document.getString("email")
-                                 if (password.isNotEmpty() && email.isNotEmpty()) {
-                                     if (registrationsUserPassword == password
-                                         && registrationsUserEmail == email
-                                     ) {
-                                         navController.navigate(nameScreenNavigations)
-                                         // завершаем работу кода
-                                         return@addOnSuccessListener
-                                     }
-                                 } else {
-                                     colorOutline.value = Red
-                                     Toast.makeText(context, "Заполните поля", Toast.LENGTH_SHORT)
-                                         .show()
-                                 }
-                             }
-                         }*/
                 } else {
                     val error = task.exception
                     if (error is FirebaseAuthInvalidUserException) {
@@ -249,9 +252,6 @@ class FirebaseRegistrations {
     }
 
 
-    fun fireStoreName( name:MutableState<String>){
-
-    }
 
 // вытаскиваем картику из Storage
 
@@ -291,13 +291,13 @@ class FirebaseRegistrations {
         }
     }
     @Composable
-    fun ImageAccountData(image: MutableState<Bitmap?>) {
+    fun ImageAccountData(image: MutableState<Bitmap?>,
+                         path: String) {
 // Загружаем изображение из Firebase Storage
         LaunchedEffect(Unit) {
-            val bitmap = loadFirebaseImage(storageFireStore())
+            val bitmap = loadFirebaseImage(path)
             image.value = bitmap
         }
     }
-
 
 }

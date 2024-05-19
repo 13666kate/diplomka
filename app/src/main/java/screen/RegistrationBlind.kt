@@ -5,6 +5,7 @@ package screen
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.diplom1.R
+import com.example.diplom1.ShedPreferences
 import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.Grey
 import com.example.diplom1.ui.theme.colorOlivical
@@ -35,7 +37,6 @@ import com.example.diplom1.uiComponets.ComponetsRegistrations
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import firebase.FirebaseRegistrations
 import firebase.NameCollactionFirestore
 import sence.kate.practica3.padding.Padding
 import viewModel.RegistrationViewModel
@@ -43,8 +44,9 @@ import viewModel.UserType
 
 val componetsRegistrations = ComponetsRegistrations()
 
-val firestore = FirebaseFirestore.getInstance()
+//val firestore = FirebaseFirestore.getInstance()
 val storage = FirebaseStorage.getInstance()
+val iconSize = 30.dp
 
 @Composable
 fun RegistrationBlind(
@@ -53,11 +55,11 @@ fun RegistrationBlind(
     context: Context,
     userType: UserType
 ) {
+
     val clueLogin = registrationViewModel.clueLogin(
         textEmail = registrationViewModel.login,
         textColor = registrationViewModel.textColorLogin
     )
-
     val cluePassword = registrationViewModel.cluePassword(
         registrationViewModel.password,
         registrationViewModel.textColorPassword
@@ -87,7 +89,25 @@ fun RegistrationBlind(
         state = registrationViewModel.textOrRecognezedId,
         textColorIdCard = registrationViewModel.textLabelColorIDCard
     )
+
+    val clueOrganization = registrationViewModel.clueList(
+        text = registrationViewModel.organizationVolonter
+    )
+    val clueAdress = registrationViewModel.clueAdress()
+    val clueListRayon = registrationViewModel.clueList(
+        textColorList = registrationViewModel.textColorListRayon,
+        list = registrationViewModel.nameRayonList,
+        text = registrationViewModel.rayon
+    )
+    val clueListRegion = registrationViewModel.clueList(
+        textColorList = registrationViewModel.textColorListRegion,
+        list = registrationViewModel.nameRegionList,
+        text = registrationViewModel.region
+    )
+    val clueExpVolonter = registrationViewModel.clueExperienceVolonter()
     val cluePinCard = registrationViewModel.cluePinCard()
+    val statusUser = ShedPreferences.getUserTypeStatus(context)
+    Toast.makeText(context, statusUser.toString(), Toast.LENGTH_SHORT).show()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -97,85 +117,85 @@ fun RegistrationBlind(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        repeat(1) {
-            componetsRegistrations.PhotoPicker(
-                height = Padding.heightImageRegistrationScreen,
-                paddingStart = Padding.paddingLeftOrRightImage,
-                paddingTop = Padding.paddingFifty,
-                paddingEnd = Padding.paddingLeftOrRightImage,
-                paddingBottom = Padding.paddingZero,
-                wight = Padding.wightImageRegistrationScreen,
-                size = Padding.sizeImageRegistrationScreen,
-                viewModel = registrationViewModel,
-                sizeAddImage = Padding.iconSizeRegistrationAdd,
-                colorImageTrue = colorOlivical,
-                setImageUri = { uri ->
-                    registrationViewModel.setImageUri(uri)
-                },
-                imageUriState = registrationViewModel.imageUriState,
+
+        componetsRegistrations.PhotoPicker(
+            height = Padding.heightImageRegistrationScreen,
+            paddingStart = Padding.paddingLeftOrRightImage,
+            paddingTop = Padding.paddingFifty,
+            paddingEnd = Padding.paddingLeftOrRightImage,
+            paddingBottom = Padding.paddingZero,
+            wight = Padding.wightImageRegistrationScreen,
+            size = Padding.sizeImageRegistrationScreen,
+            viewModel = registrationViewModel,
+            sizeAddImage = Padding.iconSizeRegistrationAdd,
+            colorImageTrue = colorOlivical,
+            setImageUri = { uri ->
+                registrationViewModel.setImageUri(uri)
+            },
+            imageUriState = registrationViewModel.imageUriState,
 
             )
-            componetsRegistrations.TextField(
-                registrationViewModel = registrationViewModel,
-                state = registrationViewModel.festName,
-                height = Padding.heightOutlineRegistrationsScreen,
-                wight = Padding.widthOutlineRegistrationScreen,
-                label = R.string.FestName,
-                paddingStart = Padding.paddingNormalTen,
-                paddingTop = Padding.tvelv,
-                paddingEnd = Padding.paddingNormalTen,
-                paddingBottom = Padding.paddingNormalTen,
-                background = BlueBlack,
-                keyboardType = KeyboardType.Password,
-                labelColor = registrationViewModel.textColorLabelFestName,
-                clueText = R.string.FestNameClue,
-                picker = {},
-                clueColor = Grey,
-                onDoneAction = {
-                    clueName
-                }
-            )
-            componetsRegistrations.TextField(
-                registrationViewModel = registrationViewModel,
-                state = registrationViewModel.lastName,
-                height = Padding.heightOutlineRegistrationsScreen,
-                wight = Padding.widthOutlineRegistrationScreen,
-                label = R.string.LastName,
-                paddingStart = Padding.paddingNormalTen,
-                paddingTop = Padding.tvelv,
-                paddingEnd = Padding.paddingNormalTen,
-                paddingBottom = Padding.paddingNormalTen,
-                background = BlueBlack,
-                keyboardType = KeyboardType.Password,
-                labelColor = registrationViewModel.textColorLabelLastName,
-                clueText = R.string.LastNameClue,
-                picker = {},
-                clueColor = Grey,
-                onDoneAction = {
-                    clueSurname
-                }
-            )
-            componetsRegistrations.TextField(
-                registrationViewModel = registrationViewModel,
-                state = registrationViewModel.login,
-                height = Padding.heightOutlineRegistrationsScreen,
-                wight = Padding.widthOutlineRegistrationScreen,
-                label = R.string.Login,
-                paddingStart = Padding.paddingNormalTen,
-                paddingTop = Padding.tvelv,
-                paddingEnd = Padding.paddingNormalTen,
-                paddingBottom = Padding.paddingNormalTen,
-                background = BlueBlack,
-                keyboardType = KeyboardType.Email,
-                labelColor = registrationViewModel.textColorLogin,
-                clueText = R.string.LoginClue,
-                clueColor = Grey,
-                picker = {},
-                onDoneAction = {
-                    clueLogin
-                }
-            )
-        }
+        componetsRegistrations.TextField(
+            registrationViewModel = registrationViewModel,
+            state = registrationViewModel.festName,
+            height = Padding.heightOutlineRegistrationsScreen,
+            wight = Padding.widthOutlineRegistrationScreen,
+            label = R.string.FestName,
+            paddingStart = Padding.paddingNormalTen,
+            paddingTop = Padding.tvelv,
+            paddingEnd = Padding.paddingNormalTen,
+            paddingBottom = Padding.paddingNormalTen,
+            background = BlueBlack,
+            keyboardType = KeyboardType.Password,
+            labelColor = registrationViewModel.textColorLabelFestName,
+            clueText = R.string.FestNameClue,
+            picker = {},
+            clueColor = Grey,
+            onDoneAction = {
+                clueName
+            }
+        )
+        componetsRegistrations.TextField(
+            registrationViewModel = registrationViewModel,
+            state = registrationViewModel.lastName,
+            height = Padding.heightOutlineRegistrationsScreen,
+            wight = Padding.widthOutlineRegistrationScreen,
+            label = R.string.LastName,
+            paddingStart = Padding.paddingNormalTen,
+            paddingTop = Padding.tvelv,
+            paddingEnd = Padding.paddingNormalTen,
+            paddingBottom = Padding.paddingNormalTen,
+            background = BlueBlack,
+            keyboardType = KeyboardType.Password,
+            labelColor = registrationViewModel.textColorLabelLastName,
+            clueText = R.string.LastNameClue,
+            picker = {},
+            clueColor = Grey,
+            onDoneAction = {
+                clueSurname
+            }
+        )
+        componetsRegistrations.TextField(
+            registrationViewModel = registrationViewModel,
+            state = registrationViewModel.login,
+            height = Padding.heightOutlineRegistrationsScreen,
+            wight = Padding.widthOutlineRegistrationScreen,
+            label = R.string.Login,
+            paddingStart = Padding.paddingNormalTen,
+            paddingTop = Padding.tvelv,
+            paddingEnd = Padding.paddingNormalTen,
+            paddingBottom = Padding.paddingNormalTen,
+            background = BlueBlack,
+            keyboardType = KeyboardType.Email,
+            labelColor = registrationViewModel.textColorLogin,
+            clueText = R.string.LoginClue,
+            clueColor = Grey,
+            picker = {},
+            onDoneAction = {
+                clueLogin
+            }
+        )
+
         componetsRegistrations.TextField(
             registrationViewModel = registrationViewModel,
             state = registrationViewModel.password,
@@ -329,9 +349,71 @@ fun RegistrationBlind(
                 }
             )
         }
+        componetsRegistrations.ListOrganizations(
+            registrationViewModel = registrationViewModel,
+            paddingStart = Padding.paddingNormalTen,
+            paddingTop = Padding.tvelv,
+            paddingEnd = Padding.paddingNormalTen,
+            paddingBottom = Padding.paddingNormalTen,
+            wight = Padding.widthButtonLoginScreen,
+            height = Padding.heightOutlineRegistrationsScreen,
+            label = R.string.Region,
+            labelColor = registrationViewModel.textColorListRegion,
+            clueColor = Grey,
+            clueText = R.string.RegionClue,
+            background = BlueBlack,
+            size = iconSize,
+            textList = registrationViewModel.region,
+            dropDownList = registrationViewModel.nameRegionList,
+            onDoneAction = {
+                clueListRayon
+            }
+        )
+        componetsRegistrations.ListOrganizations(
+            registrationViewModel = registrationViewModel,
+            paddingStart = Padding.paddingNormalTen,
+            paddingTop = Padding.tvelv,
+            paddingEnd = Padding.paddingNormalTen,
+            paddingBottom = Padding.paddingNormalTen,
+            wight = Padding.widthButtonLoginScreen,
+            height = Padding.heightOutlineRegistrationsScreen,
+            label = R.string.Rayon,
+            labelColor = registrationViewModel.textColorListRayon,
+            clueColor = Grey,
+            clueText = R.string.RayonClue,
+            background = BlueBlack,
+            size = iconSize,
+            textList = registrationViewModel.rayon,
+            dropDownList = registrationViewModel.nameRayonList,
+            onDoneAction = {
+                clueListRegion
+            })
+
+
+        componetsRegistrations.TextField(
+            registrationViewModel = registrationViewModel,
+            state = registrationViewModel.adress,
+            height = Padding.heightOutlineRegistrationsScreen,
+            wight = Padding.widthOutlineRegistrationScreen,
+            label = R.string.Adress,
+            paddingStart = Padding.paddingNormalTen,
+            paddingTop = Padding.tvelv,
+            paddingEnd = Padding.paddingNormalTen,
+            paddingBottom = Padding.paddingNormalTen,
+            background = BlueBlack,
+            keyboardType = KeyboardType.Email,
+            labelColor = registrationViewModel.textColorAdress,
+            clueText = R.string.Adress,
+            clueColor = Grey,
+            picker = {},
+            onDoneAction = {
+                clueAdress
+
+            })
 
         if (clueLogin && cluePassword && clueDate && clueEmail &&
-            clueName && clueSurname && clueNumber && clueIdCard && cluePinCard
+            clueName && clueSurname && clueNumber && clueIdCard &&
+            cluePinCard && clueAdress && clueListRayon && clueListRegion
         ) {
             registrationViewModel.isButtonEnabled.value = true
             registrationViewModel.colorEnabledValueButtonRegistrations.value
@@ -341,48 +423,21 @@ fun RegistrationBlind(
             onClick = {
                 onClickNavigate()
                 val auth = FirebaseAuth.getInstance()
+                // Toast.makeText(context,statusUser.toString(),Toast.LENGTH_SHORT).show()
                 try {
-                    if(userType.userType.value==true) {
-                        registrationViewModel.userRegistrations(
-                            auth = auth,
-                            firestore = firestore,
-                            storage = storage,
-                            context = context,
-                            name = registrationViewModel.festName.value,
-                            surname = registrationViewModel.lastName.value,
-                            email = registrationViewModel.email.value,
-                            password = registrationViewModel.password.value,
-                            imageUri = registrationViewModel.imageUriState.value,
-                            login = registrationViewModel.login.value,
-                            documentName = NameCollactionFirestore.UsersBlind,
-                            pinCard = registrationViewModel.textOrRecognezedPin.value,
-                            idCard = registrationViewModel.textOrRecognezedId.value,
-                            registrationViewModel = registrationViewModel,
-                            birdhday = registrationViewModel.birthday.value,
-                            phone = registrationViewModel.number.value
-                        )
-                        registrationViewModel.isButtonEnabled.value = true
-                    }else{
-                        registrationViewModel.userRegistrations(
-                            auth = auth,
-                            firestore = firestore,
-                            storage = storage,
-                            context = context,
-                            name = registrationViewModel.festName.value,
-                            surname = registrationViewModel.lastName.value,
-                            email = registrationViewModel.email.value,
-                            password = registrationViewModel.password.value,
-                            imageUri = registrationViewModel.imageUriState.value,
-                            login = registrationViewModel.login.value,
-                            documentName = NameCollactionFirestore.UsersVolonters,
-                            pinCard = registrationViewModel.textOrRecognezedPin.value,
-                            idCard = registrationViewModel.textOrRecognezedId.value,
-                            registrationViewModel = registrationViewModel,
-                            birdhday = registrationViewModel.birthday.value,
-                            phone = registrationViewModel.number.value
-                        )
-                        registrationViewModel.isButtonEnabled.value = true
-                    }
+                    registrationViewModel.userRegistrations(
+                        auth = auth,
+                        firestore = FirebaseFirestore.getInstance(),
+                        storage = storage,
+                        context = context,
+                        email = registrationViewModel.email.value,
+                        password = registrationViewModel.password.value,
+                        login = registrationViewModel.login.value,
+                        documentName = NameCollactionFirestore.UsersBlind,
+                        registrationViewModel = registrationViewModel,
+
+                    )
+                    registrationViewModel.isButtonEnabled.value = true
                 } catch (e: Exception) {
                     Log.e(TAG, "Ошибка ${e.message}")
                 }
@@ -410,48 +465,11 @@ fun RegistrationBlind(
         }
 
 
-        // enabled = registrationViewModel.isButtonEnabled.value,)
-
-
-        //  Toast.makeText(context,"Успешно ", Toast.LENGTH_SHORT).show()
-        /* Row(
-             modifier = Modifier.fillMaxSize(),
-             horizontalArrangement = Arrangement.Center,
-             verticalAlignment = Alignment.CenterVertically
-         ) {
-             componetsRegistrations.FaceDetectionsID(
-                 iconBittonSize = 30.dp,
-                 icon = ImageVector.vectorResource(R.drawable.camera_alt_24),
-                 iconColor = colorOlivical,
-                 stateOrPermissions = registrationViewModel.isCameraPermission,
-                 contextToast = context,
-                 stateImage = registrationViewModel.imageBitmapFaceRecogn,
-                 stateFaceDetection = registrationViewModel.faceDetections,
-                 text = registrationViewModel.errorTextFaceDetectionsId,
-                 colorText = registrationViewModel.textColorDetectionsIdCard
-
-             )
-         }
-         Row(
-             modifier = Modifier.fillMaxSize(),
-             horizontalArrangement = Arrangement.Center,
-             verticalAlignment = Alignment.CenterVertically
-         ){
-             componetsRegistrations.FaceDetectionsPhoto(
-                 iconBittonSize = 30.dp,
-                 icon = ImageVector.vectorResource(R.drawable.camera_alt_24),
-                 iconColor = colorOlivical,
-                 stateOrPermissions = registrationViewModel.isCameraPermission,
-                 contextToast = context,
-                 stateImage = registrationViewModel.imageBitmapFaceRecogn,
-                 stateFaceDetection = registrationViewModel.faceDetections,
-                 text = registrationViewModel.errorTextFaceDetectionsPhoto,
-                 colorText = registrationViewModel.textColorDetectionsIdCard
-
-             )
-         }*/
     }
 }
+
+
+
 
 
 

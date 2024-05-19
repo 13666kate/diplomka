@@ -15,13 +15,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.diplom1.ScreenName.ScreenName
+import com.example.diplom1.ShedPreferences
 import com.example.diplom1.Tag.Tag
 import screen.BottomBarScreen
-import screen.HomeScreenUserBlind
 import screen.LoadingSplashScreen
 import screen.LoginScreen
 import screen.RegistrationBlind
+import screen.RegistrationVolonters
 import screen.UserType
+import screen.VolonterCardOrUserBlind
+import viewModel.BottomNavigationViewModel
+import viewModel.CardVolonterViewModel
 import viewModel.HomeScreenViewModel
 import viewModel.LoginViewModel
 import viewModel.RegistrationViewModel
@@ -33,22 +37,45 @@ class NavigationsMainActivity : ComponentActivity() {
     private val registrationViewModel by viewModels<RegistrationViewModel>()
     private val homeScreenViewModel by viewModels<HomeScreenViewModel>()
     private val userType by viewModels<UserType>()
+    private val bottomNavigationViewModel by viewModels<BottomNavigationViewModel>()
+    private val cardVolonterViewModel by viewModels<CardVolonterViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
+            var currentUserType = userType.getUser(this@NavigationsMainActivity)
+            var currentUserTypeRegistrations = userType.getUserRegistration(this@NavigationsMainActivity)
+            fun screen():String{
+                if (currentUserType == ShedPreferences.statusNoAuth.value) {
+                    ShedPreferences.statusNoAuth.value = "no"
+                    /*ShedPreferences.saveUserType(context = this@NavigationsMainActivity,
+                        ShedPreferences.statusNoAuth)*/
+                    return ScreenName.User
+                }else {
+                    return ScreenName.BottomHome
+                }
+            }
+            val scren = screen()
+
 
             val navController = rememberNavController()
 
-            NavHost(navController = navController, startDestination = ScreenName.User) {
+            NavHost(navController = navController, startDestination = scren) {
+
                 composable(ScreenName.User) {
                     UserType(onclickButtonTypeBlind = {
                         try {
-                            Toast(
-                                context = this@NavigationsMainActivity,
-                                message = "${userType.userType.value}"
-                            )
-                            navController.navigate(ScreenName.LoginScreen)
+
+                                if (currentUserType == ShedPreferences.statusNoAuth.value) {
+                                    navController.navigate(ScreenName.LoginScreen)
+                                } else if (currentUserType.equals(userType.UserBlind.value)) {
+                                navController.navigate(ScreenName.BottomHome)
+                                    ShedPreferences.saveUserType(context = this@NavigationsMainActivity,
+                                        userType = userType.UserBlind.value)
+
+                             }
+
                         } catch (e: Exception) {
                             Log(
                                 tag = Tag.navigationError,
@@ -57,11 +84,19 @@ class NavigationsMainActivity : ComponentActivity() {
                         }
                     }, onclickButtonTypeVolonter = {
                         try {
+
+                                if (currentUserType == ShedPreferences.statusNoAuth.value) {
+                                    navController.navigate(ScreenName.LoginScreen)
+                                } else if (currentUserType == userType.UserVolonters.value) {
+                                    ShedPreferences.saveUserType(context = this@NavigationsMainActivity,
+                                        userType = userType.UserVolonters.value)
+                                    navController.navigate(ScreenName.BottomHome)
+                                }
+
                             Toast(
                                 context = this@NavigationsMainActivity,
-                                message = "${userType.userType.value}"
+                                message = "${currentUserType}"
                             )
-                            navcintroller(navController, ScreenName.LoginScreen)
                         } catch (e: Exception) {
                             Log(
                                 tag = Tag.navigationError,
@@ -75,8 +110,6 @@ class NavigationsMainActivity : ComponentActivity() {
                 composable(ScreenName.LoginScreen) {
                     LoginScreen(
                         loginViewModel = loginViewModel,
-                        /*context = this@NavigationsMainActivity,
-                        navHostController = navController,*/
                         onClickRegistrations = {
                             try {
                                 navcintroller(
@@ -91,23 +124,62 @@ class NavigationsMainActivity : ComponentActivity() {
                             }
                         },
 
-                     onClickLogin = {
-                        LogicalRegistrations().authentifications(
-                            context = this@NavigationsMainActivity,
-                            navHostController = navController,
-                            userType = userType,
-                            loginViewModel = loginViewModel,
-                            nameNavigateHome = "Bottom"
-                        )
-                        })
-                }
+                        onClickLogin = {
+                           // if (cardVolonterViewModel.uniqueList.isEmpty()) {
+                               /* cardVolonterViewModel.getList(
+                                    this@NavigationsMainActivity, cardVolonterViewModel, userType)*/
+                            LogicalRegistrations().authentifications(
+                                context = this@NavigationsMainActivity,
+                                navHostController = navController,
+                                userType = userType,
+                                loginViewModel = loginViewModel,
+                                nameNavigateHome = ScreenName.BottomHome,
 
+                         ) }
+                    )
+
+                         /*   loginViewModel.Login(
+                                context = this@NavigationsMainActivity,
+                                navController = navController,
+                                userType = userType,
+                                loginViewModel = loginViewModel,
+                                nameNavigateHome = ScreenName.BottomHome
+                            )
+
+                        })*/
+                }
                 composable(ScreenName.RegistrationsScreen) {
-                    RegistrationBlind(
-                        registrationViewModel = registrationViewModel,
-                        context = this@NavigationsMainActivity,
-                        onClickNavigate = {
-                            try {
+                    if(userType.userType.value == true ) {
+                        RegistrationBlind(
+                            registrationViewModel = registrationViewModel,
+                            context = this@NavigationsMainActivity,
+                            onClickNavigate = {
+                                try {
+                                    navcintroller(
+                                        navController = navController,
+                                        nameScreen = ScreenName.LoadingScreen
+                                    )
+                                    // Навигация на экран загрузки
+                                    // Поставить задачу в очередь с задержкой 2 секунды
+                                    screenLoading(
+                                        navController = navController,
+                                        nameNavigateScreen = ScreenName.LoginScreen
+                                    )
+
+                                } catch (e: Exception) {
+                                    Log.e(
+                                        Tag.navigationError,
+                                        Tag.errorNavigateNavigationsMainActivity + "${e.message}"
+                                    )
+                                }
+                            },
+                            userType = userType
+                        )
+                    }else {
+                        RegistrationVolonters(
+                            registrationViewModel = registrationViewModel,
+                            onClickNavigate = {
+                                try {
                                 navcintroller(
                                     navController = navController,
                                     nameScreen = ScreenName.LoadingScreen
@@ -125,16 +197,49 @@ class NavigationsMainActivity : ComponentActivity() {
                                     Tag.errorNavigateNavigationsMainActivity + "${e.message}"
                                 )
                             }
-                        },
-                        userType = userType
-                    )
-
+                                              },
+                            context = this@NavigationsMainActivity,
+                            userType = userType
+                        )
+                    }
                 }
                 composable(ScreenName.LoadingScreen) {
                     LoadingSplashScreen(registrationViewModel = registrationViewModel)
                 }
-                composable("Bottom") {
-                   BottomBarScreen( homeScreenViewModel =homeScreenViewModel )
+                composable(ScreenName.BottomHome) {
+                    BottomBarScreen(
+                        homeScreenViewModel = homeScreenViewModel,
+                        bottomNavigationViewModel = bottomNavigationViewModel,
+                        cardVolonterViewModel = cardVolonterViewModel,
+                        nameNavigate = ScreenName.User,
+                        userType = userType,
+                        context = this@NavigationsMainActivity,
+                        navControllers = navController
+                    )
+
+
+                }
+                /* composable("volo") {
+                     VolonterCardOrBlind(cardVolonterViewModel = cardVolonterViewModel,
+                         userType = userType,
+                         navController)
+                 }*/
+
+                composable("Card") {
+                    //  try {
+                    VolonterCardOrUserBlind(cardVolonterViewModel,
+                        click = {
+                            navController.navigate("volo")
+                        }, context = this@NavigationsMainActivity,
+                        userType = userType
+
+                    )
+
+                    //  }catch (e:Exception){
+                    //       Log.e("")
+                    //   }
+
+
                 }
 
 
@@ -181,7 +286,12 @@ class NavigationsMainActivity : ComponentActivity() {
             navController.navigate(nameNavigateScreen) // Навигация на основной экран
         }, 4000)
     }
+ /*   override fun onResume() {
+        super.onResume()
+        // Переинициализируем поток данных при каждом перезаходе пользователя
 
+        cardVolonterViewModel.getListUserType(context = this)
+    }*/
 }
 
 

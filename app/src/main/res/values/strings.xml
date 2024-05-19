@@ -8,8 +8,13 @@
     <string name="DateBirthday">Дата Рождения</string>
     <string name="IdCard">Номер пасспорта(ID)</string>
     <string name="PinCard">идентификационный номер </string>
-
-
+    <string name="Organization">Организация </string>
+    <string name="AboutMe">О себе, для подопечного </string>
+    <string name="YersVolonrers">Сколько лет вы в волонтерстве? </string>
+    <string name="Rayon">Район проживания</string>
+    <string name="Region"> Область проживания </string>
+    <string name="City"> Город проживания </string>
+    <string name="Adress">Адрес проживания </string>
     <string name="FestName">Имя</string>
     <string name="Vfod">Вход</string>
     //Buttons
@@ -25,6 +30,7 @@
 
     //Text
     <string name="noRegistrations">Вы не зарегистрированны!</string>
+    <string name="searchVolonter">Поиск волонтера!</string>
 
     //Error
     <string name="ErrorRegistrations">Ошибка при регистрации</string>
@@ -51,6 +57,11 @@
     <string name="DateBirthdayClue">02/10/1992</string>
     <string name="IDCardClue">ID1558693</string>
     <string name="PinCardClue">12345678912345</string>
+    <string name="OrcanizationsClue">Красный полумесяц</string>
+    <string name="RayonClue">Жети-Огузский</string>
+    <string name="RegionClue">Чуйская</string>
+    <string name="YersVolonrersClue">10</string>
+    <string name="Аdress">Домашний Адресс</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

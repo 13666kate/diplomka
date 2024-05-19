@@ -16,8 +16,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavHostController
+import com.example.diplom1.ShedPreferences
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+//import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
 import com.google.mlkit.vision.text.TextRecognition
@@ -261,6 +262,17 @@ public class LogicalRegistrations() {
                           nameNavigateHome: String
     ){
         try {
+
+
+
+           /* if (userType.userType.value == true){
+              loginViewModel.saveStstusTrueUser(context)
+            }else {
+                loginViewModel.saveStstusFasleVolonter(context)
+            }
+             val userTypeVolonter = loginViewModel.getStatususerVolonter(context)
+             val userTypeBlind = loginViewModel.getStatususerBlind(context)*/
+
             if (userType.userType.value == true) {
                 loginViewModel.userAuthentication(
                     email = loginViewModel.login,
@@ -272,8 +284,9 @@ public class LogicalRegistrations() {
                     context = context,
                     nameScreenNavigations = nameNavigateHome,
                 )
-
-            } else {
+                val authType = userType.UserBlind.value
+                ShedPreferences.saveUserType(context, authType)
+            } else   {
                 loginViewModel.userAuthentication(
                     email = loginViewModel.login,
                     password = loginViewModel.Password,
@@ -284,7 +297,8 @@ public class LogicalRegistrations() {
                     context = context,
                     nameScreenNavigations = nameNavigateHome,
                 )
-
+                val authType = userType.UserVolonters
+                ShedPreferences.saveUserType(context, authType.value)
             }
         }catch (e:Exception){
             Log.e("Auth",e.message.toString())

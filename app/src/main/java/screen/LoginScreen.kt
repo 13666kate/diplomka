@@ -24,6 +24,7 @@ import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.colorOlivical
 import firebase.FirebaseRegistrations
 import sence.kate.practica3.padding.Padding
+import viewModel.CardVolonterViewModel
 import viewModel.UserType
 
 val componets = ComponetsLogin();
@@ -84,6 +85,7 @@ fun LoginScreen(
              labelText = R.string.Vfod,
              onClick = {
                     onClickLogin()
+
 
                      },
              paddingStart = Padding.paddingSmall,

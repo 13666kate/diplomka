@@ -6,4 +6,7 @@ object ScreenName {
     val RegistrationsScreen = "registrationsScreen"
     val LoadingScreen = "loadingScreen"
     val HomeUserBlindScreen = "homeUserBlindScreen"
+    val VolonterAdd = "volonterAdd"
+    val BottomHome = "bottomHome"
+    val Notifications = "notifications"
 }

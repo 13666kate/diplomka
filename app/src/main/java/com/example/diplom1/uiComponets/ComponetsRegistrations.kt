@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,20 +14,30 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -62,8 +73,17 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
+import com.example.diplom1.ui.theme.BlueBlack
 
 
 class ComponetsRegistrations {
@@ -173,7 +193,7 @@ class ComponetsRegistrations {
                         photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                         viewModel.setIconImage(imageUriState.value);
 
-                     //   setIconImage(uriImage.value)
+                        //   setIconImage(uriImage.value)
 
                     },
                     modifier = Modifier
@@ -237,7 +257,7 @@ class ComponetsRegistrations {
         clueText: Int,
         clueColor: Color,
         onDoneAction: () -> Unit,
-        picker: () -> Unit
+        picker: () -> Unit,
     ) {
         val focusManager = LocalFocusManager.current
         TextField(
@@ -256,6 +276,10 @@ class ComponetsRegistrations {
                 .width(wight)
                 .height(height)
                 .background(background)
+                .onGloballyPositioned { coordinates ->
+                    //This value is used to assign to the DropDown the same width
+                    registrationViewModel.textSize.value = coordinates.size.toSize()
+                }
                 .clickable {
                     picker()
                 },
@@ -308,7 +332,7 @@ class ComponetsRegistrations {
         paddingTop: Dp,
         paddingEnd: Dp,
         paddingStart: Dp,
-      //  enabled: Boolean
+        //  enabled: Boolean
     ) {
         androidx.compose.material3.Button(
             modifier = Modifier
@@ -319,7 +343,7 @@ class ComponetsRegistrations {
             onClick = {
 
             },
-          //  enabled = enabled,
+            //  enabled = enabled,
 
         ) {
             Text(
@@ -411,9 +435,9 @@ class ComponetsRegistrations {
         stateImage: MutableState<Bitmap?>,
         stateOrPermissions: MutableState<Boolean>,
         regex: String,
-        actions:()->Unit,
+        actions: () -> Unit,
 
-    ) {
+        ) {
 
         TextField(
             registrationViewModel = registrationViewModel,
@@ -436,14 +460,14 @@ class ComponetsRegistrations {
             stateImage = stateImage,
             contextToast = contextToast,
             stateOrRecognized = staTextOrReognezed,
-            regex =regex ,
+            regex = regex,
         )
         val cameraPermissions = LogicalRegistrations().cameraPermission(
             stateCameraPermissions = stateOrPermissions,
             contextToast = contextToast,
             activityResultLauncher = takePicture,
 
-        )
+            )
         IconButton(
             size = iconBittonSize,
             icon = icon,
@@ -463,14 +487,14 @@ class ComponetsRegistrations {
         stateImage: MutableState<Bitmap?>,
         stateFaceDetection: MutableState<Boolean>,
         text: MutableState<String>,
-        colorText:MutableState<Color>,
+        colorText: MutableState<Color>,
 
-    ) {
+        ) {
         val takePicture = LogicalRegistrations().imageLauncherFaceDetections(
             stateImage = stateImage,
             contextToast = contextToast,
             stateFaceDetected = stateFaceDetection,
-            text=text
+            text = text
         )
         val cameraPermissions = LogicalRegistrations().cameraPermission(
             stateCameraPermissions = stateOrPermissions,
@@ -478,12 +502,15 @@ class ComponetsRegistrations {
             activityResultLauncher = takePicture,
 
 
-        )
-        Text(text = text.value,
+            )
+        Text(
+            text = text.value,
             color = colorText.value,
             style = TextStyle(
                 fontSize = Padding.textLabelSize,
-                fontWeight = FontWeight.Bold,))
+                fontWeight = FontWeight.Bold,
+            )
+        )
         IconButton(
             size = iconBittonSize,
             icon = icon,
@@ -503,25 +530,28 @@ class ComponetsRegistrations {
         stateImage: MutableState<Bitmap?>,
         stateFaceDetection: MutableState<Boolean>,
         text: MutableState<String>,
-        colorText:MutableState<Color>,
+        colorText: MutableState<Color>,
     ) {
         val takePicture = LogicalRegistrations().imageLauncherFaceDetections(
             stateImage = stateImage,
             contextToast = contextToast,
             stateFaceDetected = stateFaceDetection,
-            text=text
+            text = text
         )
         val cameraPermissions = LogicalRegistrations().cameraPermission(
             stateCameraPermissions = stateOrPermissions,
             contextToast = contextToast,
             activityResultLauncher = takePicture,
 
-        )
-        Text(text = text.value,
+            )
+        Text(
+            text = text.value,
             color = colorText.value,
             style = TextStyle(
                 fontSize = Padding.textLabelSize,
-                fontWeight = FontWeight.Bold,))
+                fontWeight = FontWeight.Bold,
+            )
+        )
         IconButton(
             size = iconBittonSize,
             icon = icon,
@@ -530,6 +560,7 @@ class ComponetsRegistrations {
             cameraPermissions.launch(Manifest.permission.CAMERA)
         }
     }
+
     @Composable
     fun IconButton(
         size: Dp,
@@ -556,7 +587,124 @@ class ComponetsRegistrations {
         }
     }
 
-}
+    @Composable
+    fun ListOrganizations(
+        registrationViewModel: RegistrationViewModel,
+        paddingStart: Dp,
+        paddingTop: Dp,
+        paddingEnd: Dp,
+        paddingBottom: Dp,
+        wight: Dp,
+        height: Dp,
+        label: Int,
+        labelColor: MutableState<Color>,
+        clueColor: Color,
+        clueText: Int,
+        background: Color,
+        onDoneAction: () -> Unit,
+        size: Dp,
+        textList:MutableState<String>,
+        dropDownList:List<String>,
+
+    ) {
+
+        var expanded = remember { mutableStateOf(false) }
+
+        val icon = if (expanded.value)
+            Icons.Filled.KeyboardArrowUp
+        else
+            Icons.Filled.KeyboardArrowDown
+
+
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+
+        ) {
+
+            TextField(
+                registrationViewModel = registrationViewModel,
+                state = textList,
+                wight = wight,
+                height = height,
+                label = label,
+                paddingStart = paddingStart,
+                paddingTop = paddingTop,
+                paddingEnd = paddingEnd,
+                paddingBottom = paddingBottom,
+                background = background,
+                labelColor = labelColor,
+                clueText = clueText,
+                clueColor = clueColor,
+                onDoneAction = { onDoneAction() }) {
+
+            }
+
+            Icon(
+                icon, "contentDescription",
+                Modifier
+                    .clickable
+                    {
+                        try{
+                            expanded.value = !
+                            expanded.value
+                        }catch (e:Exception){
+                            Log.e("icon", e.message.toString())
+                        }
+
+                    }
+                    .size(size),
+                tint = (colorOlivical),
+            )
+        }
+        Column( modifier = Modifier
+            .background(color = colorOlivical),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+
+
+            DropdownMenu(
+                expanded = expanded.value,
+                onDismissRequest = {expanded.value = false },
+                modifier = Modifier
+                    .background(
+                        color = colorOlivical,
+                        shape = RoundedCornerShape(size = 10.dp)
+                    )
+                    /*.width(
+                        with(LocalDensity.current) {
+                            registrationViewModel.textSize.value.width.toDp()
+                        },
+                    )*/
+                    .width(200.dp)
+                    .height(300.dp)
+                    //.width(50.dp).height(100.dp)
+            ) {
+                dropDownList.forEach { label ->
+                    DropdownMenuItem(onClick = {
+                        try {
+                            textList.value = label
+                            expanded.value = false
+                        }catch (e:Exception){
+                        Log.e("icon", e.message.toString())
+                    }
+                    }, modifier = Modifier
+                        .background(colorOlivical,)) {
+                        Text(text = label,
+                            color = BlueBlack,
+                            style = TextStyle(
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold
+                            ),)
+                    }
+                }
+            }
+        }
+    }
+    }
+
+
 
 
 

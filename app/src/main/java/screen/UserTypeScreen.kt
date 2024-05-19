@@ -2,11 +2,10 @@
 package screen
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.widget.Toast
-import androidx.camera.core.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,30 +13,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.diplom1.R
+import com.example.diplom1.ShedPreferences
 import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.colorOlivical
-import com.google.firebase.annotations.PreviewApi
 import sence.kate.practica3.padding.Padding
+import viewModel.LoginViewModel
 import viewModel.UserType
 
 
@@ -64,8 +56,11 @@ fun UserType(
        modifier = Modifier
            .size(290.dp))
         Button(onClick = {
-            userType.isUsertrue()
             onclickButtonTypeBlind()
+          ShedPreferences.saveUserTypeStatus(context,ShedPreferences.userTrue)
+            val status= ShedPreferences.getUserTypeStatus(context)
+          userType.userTypeTrue()
+            Toast.makeText(context,status.toString(), Toast.LENGTH_SHORT).show()
                          },
             modifier = Modifier
                 .width(Padding.widthButtonLoginScreen,)
@@ -82,10 +77,11 @@ fun UserType(
 
         }
         Button(onClick = {
+          userType.userTypeFalse()
+           ShedPreferences.saveUserTypeStatus(context,ShedPreferences.userFalse)
+          /*  val status= ShedPreferences.getUserTypeStatus(context)
+                Toast.makeText(context,status.toString(), Toast.LENGTH_SHORT).show()*/
             onclickButtonTypeVolonter()
-            userType.isUserFalse()
-                //Toast.makeText(context, "${UserType().userType.value}", Toast.LENGTH_SHORT).show()
-
         },
             modifier = Modifier
                 .width(Padding.widthButtonLoginScreen,)

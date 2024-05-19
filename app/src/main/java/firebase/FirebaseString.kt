@@ -1,9 +1,5 @@
 package firebase
 
-import android.net.Uri
-import androidx.compose.runtime.MutableState
-import androidx.compose.ui.text.input.KeyboardType.Companion.Uri
-
 object FirebaseString {
     var image = "image"
     var surname = "surname"
@@ -15,6 +11,17 @@ object FirebaseString {
     var idCard = "idCard"
     var birdhday = "birdhday"
     var phone = "phone"
+    val organization = "volonterOrganizations"
+    val aboutMe = "aboutMe"
+    val statusInvalid = "statisInvalid"
+    val region  = "region"
+    val rayon = "raion"
+    val adress = "adress"
+    val experience = "volonterexperience"
 
+    val uidUserAuch = "uidUserAuch"
+    val uidUserSearch = "uidUserSearch"
+    val request = "request"
+    val expectation = "expectation"
 
 }

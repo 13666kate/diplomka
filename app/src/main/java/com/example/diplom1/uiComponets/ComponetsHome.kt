@@ -90,7 +90,8 @@ class ComponetsHome {
 
         ) {
 
-            FirebaseRegistrations().ImageAccountData(image = viewModel.imageState)
+            FirebaseRegistrations().ImageAccountData(image = viewModel.imageState,
+                path = FirebaseRegistrations().storageFireStore())
             if (viewModel.imageState.value != null) {
                 val bitmap: Bitmap = viewModel.imageState.value!!
                 Image(
@@ -142,7 +143,7 @@ class ComponetsHome {
             modifier = Modifier
                 // .width(IntrinsicSize.Max)
                 .fillMaxWidth()
-                .padding(end = 20.dp)
+                .padding(end = 30.dp)
                 .background(
                     color = phonAliment,
                     shape = RoundedCornerShape(25.dp)
