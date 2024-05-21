@@ -41,6 +41,7 @@ import com.example.diplom1.ui.theme.Red
 import sence.kate.practica3.padding.Padding
 import viewModel.BottomNavigationViewModel
 import viewModel.CardVolonterViewModel
+import viewModel.ProfileViewModel
 import viewModel.UserType
 
 @Composable
@@ -48,6 +49,7 @@ fun BottomBarScreen(
     homeScreenViewModel: HomeScreenViewModel,
     bottomNavigationViewModel: BottomNavigationViewModel,
     cardVolonterViewModel: CardVolonterViewModel,
+    profileViewModel: ProfileViewModel,
     nameNavigate: String,
     userType: UserType,
     context: Context,
@@ -78,7 +80,8 @@ fun BottomBarScreen(
                 userType = userType,
                 context = context,
                 navControllers = navControllers,
-                bottomNavigationViewModel = bottomNavigationViewModel
+                bottomNavigationViewModel = bottomNavigationViewModel,
+                profileViewModel = profileViewModel
 
             )
         }

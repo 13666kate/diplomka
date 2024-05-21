@@ -9,4 +9,8 @@ object ScreenName {
     val VolonterAdd = "volonterAdd"
     val BottomHome = "bottomHome"
     val Notifications = "notifications"
+    val UserListSee = "userListSee"
+    val UserCards = "userCards"
+    val volonterOrUserAdd = "VolonterOrUserAdd"
+    val FrendListSee = "FrendListSee"
 }

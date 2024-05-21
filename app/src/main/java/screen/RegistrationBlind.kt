@@ -106,8 +106,8 @@ fun RegistrationBlind(
     )
     val clueExpVolonter = registrationViewModel.clueExperienceVolonter()
     val cluePinCard = registrationViewModel.cluePinCard()
-    val statusUser = ShedPreferences.getUserTypeStatus(context)
-    Toast.makeText(context, statusUser.toString(), Toast.LENGTH_SHORT).show()
+   /* val statusUser = ShedPreferences.getUserTypeStatus(context)
+    Toast.makeText(context, statusUser.toString(), Toast.LENGTH_SHORT).show()*/
     Column(
         modifier = Modifier
             .fillMaxSize()

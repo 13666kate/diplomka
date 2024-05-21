@@ -3,10 +3,12 @@ package screen
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,26 +43,42 @@ import com.example.diplom1.uiComponets.ComponetsRegistrations
 import sence.kate.practica3.padding.Padding
 import viewModel.CardVolonterViewModel
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavHostController
+import com.example.diplom1.ShedPreferences
 import com.example.diplom1.ui.theme.Black
 import com.example.diplom1.uiComponets.IDCardComponets
 import kotlinx.coroutines.flow.MutableStateFlow
 import viewModel.UserType
+import java.nio.file.WatchEvent
 
 @Composable
 fun VolonterCardOrUserBlind(
     cardVolonterViewModel: CardVolonterViewModel,
 //    navController: NavHostController,
-    //navController:  NavHostController,
- //   nameScreen: String,
+    navController: NavHostController,
+    nameScreenAdduser: String,
     context: Context,
     userType: UserType,
-    click:()->Unit
+    click: () -> Unit,
+    clickListFrend: () -> Unit
 ) {
+    val statusList = ShedPreferences.getShedPreferences(
+        context = context,
+        UserFileCollections = ShedPreferences.FileCollectionsListFriend,
+        keyFile = ShedPreferences.FileListAdd
+    )
+    //   if (statusList == ShedPreferences.listAddNo) {
     val idCardComponets = IDCardComponets()
     Column(
         modifier = Modifier
@@ -70,7 +88,7 @@ fun VolonterCardOrUserBlind(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Search(
-           textValeu = cardVolonterViewModel.textSearch,
+            textValeu = cardVolonterViewModel.textSearch,
             text = cardVolonterViewModel.text,
             textColor = BlueBlack,
             textLabel = R.string.searchVolonter,
@@ -81,13 +99,13 @@ fun VolonterCardOrUserBlind(
         ) {
 
         }
-    //   cardVolonterViewModel.loadDataIfNeeded()
-      //  val cardVolonterViewModel: CardVolonterViewModel = rememberViewModel()
+        //   cardVolonterViewModel.loadDataIfNeeded()
+        //  val cardVolonterViewModel: CardVolonterViewModel = rememberViewModel()
         if (cardVolonterViewModel.text.value.isNotEmpty()) {
             idCardComponets.LazyColumnSearch(
                 cardVolonterViewModel = cardVolonterViewModel,
                 click = click,
-                context =context,
+                context = context,
                 userType = userType
             )
         } else {
@@ -100,18 +118,89 @@ fun VolonterCardOrUserBlind(
             )
         }
 
-       // screen.Text(text =cardVolonterViewModel.searchOrEmailUser , informations = "польз")
-     //   screen.Text(text =cardVolonterViewModel.stateIdUserSerch , informations = "вол")
+        // screen.Text(text =cardVolonterViewModel.searchOrEmailUser , informations = "польз")
+        //   screen.Text(text =cardVolonterViewModel.stateIdUserSerch , informations = "вол")
         //screen.Text(text =cardVolonterViewModel.stateIdUserSerch2 , informations = "воло")
 
-      //  screen.Text(text =cardVolonterViewModel.stateEmailUserSerch.value , informations = "k")
+        //  screen.Text(text =cardVolonterViewModel.stateEmailUserSerch.value , informations = "k")
     }
-
 }
+//}
 
-
-
-
+@Composable
+fun ListFruends(
+    context: Context,
+    cardVolonterViewModel: CardVolonterViewModel,
+    userType: UserType,
+    clickListFrend: () -> Unit,
+    clickIconFriendAdd: () -> Unit,
+) {
+    val idCardComponets = IDCardComponets()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = BlueBlack)
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val size = 55.dp
+        val iconColor = colorOlivical
+        val textStete = remember {
+            mutableStateOf("")
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            val status = ShedPreferences.getUserType(context)
+            if (status == userType.UserBlind.value) {
+                textStete.value = "Ваш список Волонтеров"
+            } else if (status == userType.UserVolonters.value) {
+                textStete.value = "Ваш список Пользователей"
+            } else {
+                textStete.value = "Cписок"
+            }
+            Row(
+                modifier = Modifier
+                    .padding(top = 20.dp, bottom = 15.dp),
+                // .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = textStete.value,
+                    style = TextStyle(
+                        color = colorOlivical,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                )
+            }
+            IconButton(
+                modifier =
+                Modifier.size(size),
+                onClick = {
+                    clickIconFriendAdd()
+                },
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_group_add_24),
+                    contentDescription = "Add image",
+                    modifier = Modifier
+                        .size(size),
+                    tint = (iconColor),
+                )
+            }
+        }
+        idCardComponets.LazyColumnList(context = context,
+            cardVolonterViewModel = cardVolonterViewModel,
+            userType = userType,
+            onClick = {
+                clickListFrend()
+            })
+    }
+}
 
 
 @Composable
@@ -175,7 +264,6 @@ fun Row(
 }
 
 
-
 @Composable
 fun Search(
     textValeu: MutableStateFlow<String>,
@@ -231,10 +319,18 @@ fun Search(
     )
 }
 
-/*
 @Preview
 @Composable
 fun CardVolonter() {
-    //   VolonterCardOrUserBlind(CardVolonterViewModel())
-    screen.Row(baground = colorOlivical, CardVolonterViewModel())
-}*/
+    val context = LocalContext.current
+    val viewModel = CardVolonterViewModel() // Здесь вы можете создать заглушечный ViewModel
+    val userType = UserType()
+    ListFruends(
+        context = context,
+        cardVolonterViewModel = CardVolonterViewModel(),
+        userType = UserType(),
+        {}
+    ) {
+
+    }
+}

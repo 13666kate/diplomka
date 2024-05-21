@@ -1,19 +1,25 @@
 package com.example.diplom1.navigations
 
 import DataClass.BottomBarScreen
-import DataClass.UserSCardInformations
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.diplom1.ScreenName.ScreenName
 import com.example.diplom1.ShedPreferences
+import com.example.diplom1.ui.theme.colorOlivical
+import com.example.diplom1.uiComponets.AddVolonter
+import firebase.FireBaseIDCardUser
 import screen.HomeScreenUserBlind
+import screen.InformationFriendList
+import screen.InformationsListAdd
+import screen.ListFruends
 import screen.NotificationsUserAdd
 import screen.Profile
 import screen.VolonterCardOrBlind
@@ -22,6 +28,7 @@ import viewModel.BottomNavigationViewModel
 import viewModel.CardVolonterViewModel
 import viewModel.HomeScreenViewModel
 import viewModel.LoginViewModel
+import viewModel.ProfileViewModel
 import viewModel.UserType
 
 
@@ -33,6 +40,7 @@ fun BottomNavGraph(
     bottomNavigationViewModel: BottomNavigationViewModel,
     userType: UserType,
     context: Context,
+    profileViewModel: ProfileViewModel,
     navControllers: NavController,
     nameScreen: String,
 ) {
@@ -61,34 +69,37 @@ fun BottomNavGraph(
                 )
         }
         composable(bottomNavigationViewModel.statusScreen.value) {
-           // cardVolonterViewModel.getList(context, cardVolonterViewModel, userType)
-            VolonterCardOrUserBlind(
-                cardVolonterViewModel = cardVolonterViewModel,
-                // navController = navController , nameScreen = "volo",,
 
-                click = {
-                    try {
-                     //   if (cardVolonterViewModel.userCards.isEmpty()) {
-                    //    cardVolonterViewModel.getList(context, cardVolonterViewModel, userType)
-                      //  }
-
-                        navController.navigate(ScreenName.VolonterAdd)
-
-                    } catch (e: Exception) {
-                        Log.e("cardw", "ошибка:" + e.message.toString())
-                    }
-
-                }, context = context,
-                userType = userType
+            val status = ShedPreferences.getShedPreferences(
+                context, UserFileCollections = ShedPreferences.FileCollectionsListFriend,
+                keyFile = ShedPreferences.FileListAdd
             )
-        }
+            /*       val list =  cardVolonterViewModel.FriendList(
+            context,userType, cardVolonterViewModel
+        )*/
+            //  Toast.makeText(context,status.toString(),Toast.LENGTH_SHORT).show()
+                     /*  if (status == ShedPreferences.listAddNo){
+                navController.navigate(ScreenName.VolonterAdd)
+            } else if(status == ShedPreferences.listAddYes) {*/
+                           ListFruends(context,
+                               cardVolonterViewModel = cardVolonterViewModel,
+                               userType = userType,
+                               clickListFrend = {
+                                   navController.navigate(ScreenName.FrendListSee)
+                               },
+                               clickIconFriendAdd = {
+                                   navController.navigate(ScreenName.volonterOrUserAdd)
+                               }
+
+                           )
+                       }
+      // }
         composable(BottomBarScreen.Profile.route) {
-            val loginViewModel = LoginViewModel()
             Profile(
                 context = context, userType = userType,
                 navController = navControllers,
                 nameScreen = nameScreen,
-                loginViewModel = loginViewModel,
+                profileViewModel = profileViewModel,
                 cardVolonterViewModel = cardVolonterViewModel
             )
         }
@@ -98,9 +109,17 @@ fun BottomNavGraph(
         composable("Click") {
             Text(text = "Звонок ")
         }
-        composable(ScreenName.VolonterAdd) {
-        //    Toast.makeText(context,cardVolonterViewModel.emailStateCardUser.value,Toast.LENGTH_SHORT).show()
+        composable(ScreenName.FrendListSee) {
+            InformationFriendList(
+                context = context,
+                userType = userType,
+                cardVolonterViewModel = cardVolonterViewModel,
+                navController = navController,
+                screenName = bottomNavigationViewModel.statusScreen.value)
+        }
 
+            composable(ScreenName.UserCards) {
+        //    Toast.makeText(context,cardVolonterViewModel.emailStateCardUser.value,Toast.LENGTH_SHORT).show()
             VolonterCardOrBlind(
                 cardVolonterViewModel = cardVolonterViewModel,
                 userType = userType,
@@ -110,19 +129,69 @@ fun BottomNavGraph(
                 context = context
             )
         }
+        composable(ScreenName.VolonterAdd){
+            AddVolonter(
+                navController =navController ,
+                nameScreen = ScreenName.volonterOrUserAdd,
+                context=context,
+                userType=userType
+            )
+        }
+
+        composable(ScreenName.volonterOrUserAdd){
+            VolonterCardOrUserBlind(
+                cardVolonterViewModel = cardVolonterViewModel,
+                // navController = navController , nameScreen = "volo",,
+                click = {
+                    try {
+                        navController.navigate(ScreenName.UserCards)
+                    } catch (e: Exception) {
+                        Log.e("cardw", "ошибка:" + e.message.toString())
+                    }
+
+                }, context = context,
+                userType = userType,
+                nameScreenAdduser = ScreenName.VolonterAdd,
+                navController = navController,
+                clickListFrend = {
+                    navController.navigate(ScreenName.UserCards)
+                }
+            )
+        }
         composable(ScreenName.Notifications){
          NotificationsUserAdd(cardVolonterViewModel = cardVolonterViewModel,
              context=context,
              userType = userType,
-             onclickList = {
+
+             onclickListAdd = {
+                navController.navigate(ScreenName.UserListSee)
+             },
+             onclickListSee = {
+                 try {
+
+                     navController.navigate(ScreenName.UserListSee)
+
+                 } catch (e: Exception) {
+                     Log.e("cardw", "ошибка:" + e.message.toString())
+                 }
 
              })
-             
 
+
+        }
+        composable(ScreenName.UserListSee) {
+            InformationsListAdd(
+                cardVolonterViewModel = cardVolonterViewModel,
+                userType =userType ,
+                navController = navController,
+                screenName = ScreenName.Notifications,
+                context =context,
+            )
+        }
         }
 
     }
 
-}
+
 
 

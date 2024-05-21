@@ -87,6 +87,10 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     //база Firebase
 
+    //для видио
+    implementation ("com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:+")
+    //
+    implementation ("org.mozilla:rhino:1.7.13")
     implementation("io.coil-kt:coil:2.6.0")
     implementation( "io.coil-kt:coil-compose:2.3.0")
    // implementation("androidx.core:core-ktx:1.13.0")

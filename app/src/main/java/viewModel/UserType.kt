@@ -63,6 +63,7 @@ class UserType : ViewModel() {
                     context,
                     userType = ShedPreferences.statusNoAuth.value
                 )
+                cardVolonterViewModel.friendList.clear()
              //   cardVolonterViewModel.uniqueList.clear()
 
 

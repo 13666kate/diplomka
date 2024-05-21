@@ -57,7 +57,6 @@ fun UserType(
            .size(290.dp))
         Button(onClick = {
             onclickButtonTypeBlind()
-          ShedPreferences.saveUserTypeStatus(context,ShedPreferences.userTrue)
             val status= ShedPreferences.getUserTypeStatus(context)
           userType.userTypeTrue()
             Toast.makeText(context,status.toString(), Toast.LENGTH_SHORT).show()
@@ -78,10 +77,8 @@ fun UserType(
         }
         Button(onClick = {
           userType.userTypeFalse()
-           ShedPreferences.saveUserTypeStatus(context,ShedPreferences.userFalse)
-          /*  val status= ShedPreferences.getUserTypeStatus(context)
-                Toast.makeText(context,status.toString(), Toast.LENGTH_SHORT).show()*/
             onclickButtonTypeVolonter()
+            ShedPreferences.saveUserTypeStatus(context,ShedPreferences.userFalse)
         },
             modifier = Modifier
                 .width(Padding.widthButtonLoginScreen,)

@@ -28,6 +28,7 @@ import viewModel.BottomNavigationViewModel
 import viewModel.CardVolonterViewModel
 import viewModel.HomeScreenViewModel
 import viewModel.LoginViewModel
+import viewModel.ProfileViewModel
 import viewModel.RegistrationViewModel
 import viewModel.UserType
 
@@ -39,6 +40,7 @@ class NavigationsMainActivity : ComponentActivity() {
     private val userType by viewModels<UserType>()
     private val bottomNavigationViewModel by viewModels<BottomNavigationViewModel>()
     private val cardVolonterViewModel by viewModels<CardVolonterViewModel>()
+    private val profileViewModel by viewModels<ProfileViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -214,7 +216,9 @@ class NavigationsMainActivity : ComponentActivity() {
                         nameNavigate = ScreenName.User,
                         userType = userType,
                         context = this@NavigationsMainActivity,
-                        navControllers = navController
+                        navControllers = navController,
+                        profileViewModel = profileViewModel
+
                     )
 
 
@@ -225,22 +229,24 @@ class NavigationsMainActivity : ComponentActivity() {
                          navController)
                  }*/
 
-                composable("Card") {
+          /*      composable("Card") {
                     //  try {
                     VolonterCardOrUserBlind(cardVolonterViewModel,
                         click = {
                             navController.navigate("volo")
                         }, context = this@NavigationsMainActivity,
-                        userType = userType
+                        userType = userType,
+                        navController = navController,
+                        nameScreenAdduser = ,
 
                     )
-
+*/
                     //  }catch (e:Exception){
                     //       Log.e("")
                     //   }
 
 
-                }
+
 
 
             }
