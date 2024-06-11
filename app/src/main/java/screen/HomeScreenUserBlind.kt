@@ -1,14 +1,8 @@
 package screen
 
 
-import android.app.Notification
 import android.content.Context
-import android.graphics.Bitmap
-
-
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,62 +11,30 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-
-
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Gray
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-
-import com.example.diplom1.ui.theme.BlueBlack
-import firebase.FirebaseRegistrations
-import viewModel.HomeScreenViewModel
-
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.diplom1.R
 import com.example.diplom1.ShedPreferences
 import com.example.diplom1.ui.theme.Black
 import com.example.diplom1.ui.theme.BlackWhite
-import com.example.diplom1.ui.theme.Orange
-import com.example.diplom1.ui.theme.Red
+import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.colorOlivical
 import com.example.diplom1.uiComponets.ComponetsHome
-import firebase.NameCollactionFirestore
 import sence.kate.practica3.padding.Padding
 import viewModel.CardVolonterViewModel
+import viewModel.HomeScreenViewModel
 import viewModel.UserType
-import java.nio.file.WatchEvent
 
 val componetsHome = ComponetsHome()
 
@@ -83,6 +45,7 @@ fun HomeScreenUserBlind(
     cardVolonterViewModel: CardVolonterViewModel,
     context: Context,
     userType: UserType,
+    onClickTextRecognized: () -> Unit,
     onClickNotification: () -> Unit
 ) {
     Column(
@@ -92,6 +55,7 @@ fun HomeScreenUserBlind(
             .padding(top = 7.dp, start = 13.dp)
 
     ) {
+        //androidx.compose.material.Text(text = TesseractViewModel().text.value, color = colorOlivical)
 
         Row(
             modifier = Modifier
@@ -189,8 +153,8 @@ fun HomeScreenUserBlind(
             }
         }
         Column(modifier = Modifier
-            .fillMaxSize().
-                padding(bottom = 135.dp)
+            .fillMaxSize()
+            .padding(bottom = 135.dp)
             .verticalScroll(rememberScrollState())) {
             Row(
                 modifier = Modifier
@@ -285,9 +249,7 @@ fun HomeScreenUserBlind(
                             textColor = BlackWhite,
                             bagroundAliment = colorOlivical,
                             phonAliment = BlackWhite,
-                            {
-
-                            }
+                            onClickCall = onClickTextRecognized
                         )
                     }
                 }
@@ -311,6 +273,8 @@ fun HomeScreenUserBlind(
 
 
         }
+
+
     }
 
     /*  Row(

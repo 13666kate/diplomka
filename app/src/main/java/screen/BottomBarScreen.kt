@@ -9,39 +9,38 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Text
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.example.diplom1.navigations.BottomNavGraph
-import com.example.diplom1.ui.theme.colorOlivical
-import viewModel.HomeScreenViewModel
-import androidx.compose.material.BottomNavigation
-import androidx.navigation.NavDestination
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Text
-import androidx.compose.material3.Icon
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.diplom1.navigations.BottomNavGraph
 import com.example.diplom1.ui.theme.BlueBlack
-import com.example.diplom1.ui.theme.Grey
 import com.example.diplom1.ui.theme.Orange
-import com.example.diplom1.ui.theme.Red
+import com.example.diplom1.ui.theme.colorOlivical
 import sence.kate.practica3.padding.Padding
 import viewModel.BottomNavigationViewModel
 import viewModel.CardVolonterViewModel
+import viewModel.HomeScreenViewModel
 import viewModel.ProfileViewModel
+import viewModel.RegistrationViewModel
+import viewModel.TesseractViewModel
 import viewModel.UserType
 
 @Composable
@@ -50,10 +49,12 @@ fun BottomBarScreen(
     bottomNavigationViewModel: BottomNavigationViewModel,
     cardVolonterViewModel: CardVolonterViewModel,
     profileViewModel: ProfileViewModel,
+    registrationViewModel: RegistrationViewModel,
     nameNavigate: String,
     userType: UserType,
     context: Context,
-    navControllers: NavController
+    navControllers: NavController,
+    tesseractViewModel: TesseractViewModel
 ) {
     val navController = rememberNavController()
     Surface(color = colorOlivical) {
@@ -81,7 +82,9 @@ fun BottomBarScreen(
                 context = context,
                 navControllers = navControllers,
                 bottomNavigationViewModel = bottomNavigationViewModel,
-                profileViewModel = profileViewModel
+                profileViewModel = profileViewModel,
+                tesseractViewModel = tesseractViewModel,
+                registrationViewModel = registrationViewModel
 
             )
         }

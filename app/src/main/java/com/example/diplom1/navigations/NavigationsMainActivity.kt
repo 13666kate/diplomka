@@ -1,7 +1,10 @@
 package com.example.diplom1.navigations
 
 import Logical.LogicalRegistrations.LogicalRegistrations
+import WebRTS
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,13 +26,13 @@ import screen.LoginScreen
 import screen.RegistrationBlind
 import screen.RegistrationVolonters
 import screen.UserType
-import screen.VolonterCardOrUserBlind
 import viewModel.BottomNavigationViewModel
 import viewModel.CardVolonterViewModel
 import viewModel.HomeScreenViewModel
 import viewModel.LoginViewModel
 import viewModel.ProfileViewModel
 import viewModel.RegistrationViewModel
+import viewModel.TesseractViewModel
 import viewModel.UserType
 
 
@@ -40,12 +43,15 @@ class NavigationsMainActivity : ComponentActivity() {
     private val userType by viewModels<UserType>()
     private val bottomNavigationViewModel by viewModels<BottomNavigationViewModel>()
     private val cardVolonterViewModel by viewModels<CardVolonterViewModel>()
+    private val tesseractViewModel by viewModels<TesseractViewModel>()
     private val profileViewModel by viewModels<ProfileViewModel>()
-
+    lateinit var webRTS: WebRTS
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+          //   webRTS.initializeWebRTC(this)
         setContent {
+
             var currentUserType = userType.getUser(this@NavigationsMainActivity)
             var currentUserTypeRegistrations = userType.getUserRegistration(this@NavigationsMainActivity)
             fun screen():String{
@@ -217,7 +223,9 @@ class NavigationsMainActivity : ComponentActivity() {
                         userType = userType,
                         context = this@NavigationsMainActivity,
                         navControllers = navController,
-                        profileViewModel = profileViewModel
+                        profileViewModel = profileViewModel,
+                        tesseractViewModel = tesseractViewModel,
+                        registrationViewModel = registrationViewModel
 
                     )
 
@@ -291,6 +299,14 @@ class NavigationsMainActivity : ComponentActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             navController.navigate(nameNavigateScreen) // Навигация на основной экран
         }, 4000)
+    }
+    fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
+        return networkCapabilities != null &&
+                (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                        networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
     }
  /*   override fun onResume() {
         super.onResume()

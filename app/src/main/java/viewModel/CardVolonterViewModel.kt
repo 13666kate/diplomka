@@ -10,9 +10,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-
 import androidx.compose.runtime.MutableState
-
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -28,10 +26,8 @@ import firebase.FirebaseRegistrations
 import firebase.FirebaseString
 import firebase.NameCollactionFirestore
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -45,6 +41,7 @@ class CardVolonterViewModel : ViewModel() {
     val imageAvatarValueNo = mutableStateOf(R.drawable.baseline_account_circle_24)
     val imageStateBitmap = mutableStateOf<Bitmap?>(null)
 
+    val  saveID = mutableStateOf("")
     val imageState = mutableStateOf<Bitmap?>(null)
     val uidFirestore = mutableStateListOf<String>()
     val list: MutableList<String> = mutableListOf()

@@ -13,4 +13,9 @@ object ScreenName {
     val UserCards = "userCards"
     val volonterOrUserAdd = "VolonterOrUserAdd"
     val FrendListSee = "FrendListSee"
+    val Call = "Call"
+    val TextRecognixed = "TextRecognized"
+    val Eyes = "Eyes"
+    val Camera = "Camera"
+    val CameraAndGallery = "Gallery"
 }

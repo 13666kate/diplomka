@@ -1,12 +1,9 @@
 package screen
 
 import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,22 +14,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.example.diplom1.ShedPreferences
 import com.example.diplom1.ui.theme.BlueBlack
@@ -40,12 +31,8 @@ import com.example.diplom1.ui.theme.Orange
 import com.example.diplom1.ui.theme.Red
 import com.example.diplom1.ui.theme.colorOlivical
 import com.example.diplom1.uiComponets.ComponetsRegistrations
-import firebase.FireBaseIDCardUser
-import firebase.FirebaseProfile
-import kotlinx.coroutines.flow.first
 import sence.kate.practica3.padding.Padding
 import viewModel.CardVolonterViewModel
-import viewModel.LoginViewModel
 import viewModel.ProfileViewModel
 import viewModel.UserType
 
@@ -157,6 +144,7 @@ fun Profile(
                     text = profileViewModel.address,
                     informations = "Адрес"
                 )
+
 
 
                 val currentUserType = ShedPreferences.getUserType(context)

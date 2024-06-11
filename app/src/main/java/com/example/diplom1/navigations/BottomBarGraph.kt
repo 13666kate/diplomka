@@ -1,21 +1,19 @@
 package com.example.diplom1.navigations
 
 import DataClass.BottomBarScreen
+import WebRTS
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.diplom1.ScreenName.ScreenName
-import com.example.diplom1.ShedPreferences
-import com.example.diplom1.ui.theme.colorOlivical
 import com.example.diplom1.uiComponets.AddVolonter
-import firebase.FireBaseIDCardUser
+import screen.CameraPreview
+import screen.CameraScreen
+import screen.GalleryAndCameraScreen
 import screen.HomeScreenUserBlind
 import screen.InformationFriendList
 import screen.InformationsListAdd
@@ -27,28 +25,42 @@ import screen.VolonterCardOrUserBlind
 import viewModel.BottomNavigationViewModel
 import viewModel.CardVolonterViewModel
 import viewModel.HomeScreenViewModel
-import viewModel.LoginViewModel
 import viewModel.ProfileViewModel
+import viewModel.RegistrationViewModel
+import viewModel.TesseractViewModel
 import viewModel.UserType
 
-
+lateinit var webRTS: WebRTS
 @Composable
 fun BottomNavGraph(
     navController: NavHostController,
     homeScreenViewModel: HomeScreenViewModel,
     cardVolonterViewModel: CardVolonterViewModel,
     bottomNavigationViewModel: BottomNavigationViewModel,
+    registrationViewModel: RegistrationViewModel,
     userType: UserType,
     context: Context,
     profileViewModel: ProfileViewModel,
     navControllers: NavController,
     nameScreen: String,
+    tesseractViewModel: TesseractViewModel
 ) {
 
+      webRTS = WebRTS(cardVolonterViewModel)
+    if (NavigationsMainActivity().isNetworkAvailable(context)) {
+        // Здесь можно выполнять инициализацию WebRTC или другие сетевые операции
+        webRTS.initializeWebRTC(context)
+    } else {
+        // Вывод сообщения о том, что сеть недоступна
+        Log.e("Network", "Network is not available")
+    }
      bottomNavigationViewModel.statusScreen.value =
          bottomNavigationViewModel.Screen(userType = userType,context=context)
+
     NavHost(navController = navController, startDestination = BottomBarScreen.Home.route) {
         composable(BottomBarScreen.Home.route) {
+           /* val webRTS = WebRTS()
+            webRTS.initializeWebRTC(context)*/
             HomeScreenUserBlind(homeViewModel = homeScreenViewModel,
                 onClickCall = {
 
@@ -59,10 +71,12 @@ fun BottomNavGraph(
                 context=context,
                 userType = userType,
                 onClickNotification = {
-                   /* cardVolonterViewModel.NotificationsUserAdd(
-                        cardVolonterViewModel = cardVolonterViewModel
-                    )*/
                     navController.navigate(ScreenName.Notifications){
+                        popUpTo(ScreenName.HomeUserBlindScreen)
+                    }
+                },
+                onClickTextRecognized = {
+                    navController.navigate(ScreenName.TextRecognixed){
                         popUpTo(ScreenName.HomeUserBlindScreen)
                     }
                 }
@@ -70,10 +84,10 @@ fun BottomNavGraph(
         }
         composable(bottomNavigationViewModel.statusScreen.value) {
 
-            val status = ShedPreferences.getShedPreferences(
+          /*  val status = ShedPreferences.getShedPreferences(
                 context, UserFileCollections = ShedPreferences.FileCollectionsListFriend,
                 keyFile = ShedPreferences.FileListAdd
-            )
+            )*/
             /*       val list =  cardVolonterViewModel.FriendList(
             context,userType, cardVolonterViewModel
         )*/
@@ -107,7 +121,16 @@ fun BottomNavGraph(
 
 
         composable("Click") {
-            Text(text = "Звонок ")
+            //GenerateTokenScreen(context)
+          //  val webRTS = remember { WebRTS() }
+
+           /* AudioCallScreen(cardVolonterViewModel = cardVolonterViewModel,
+                userType = userType,
+               videoCallViewModel = VideoCallViewModel(),
+                context = context,
+                nameScreen = ScreenName.Call,
+                navController = navController
+            )*/
         }
         composable(ScreenName.FrendListSee) {
             InformationFriendList(
@@ -117,6 +140,46 @@ fun BottomNavGraph(
                 navController = navController,
                 screenName = bottomNavigationViewModel.statusScreen.value)
         }
+       // val webRTS = WebRTS()
+        composable(ScreenName.Call) {
+               /* Call(
+                    cardVolonterViewModel = cardVolonterViewModel,
+                    onClick = {
+                        navController.navigate("Click") {
+                            popUpTo("Click") { inclusive = true }
+                        }
+                    },
+                    answer = {
+                        try {
+                            webRTS.answerCall()
+                        } catch (e: Exception) {
+                            Log.e("Call", e.message.toString())
+                        }
+                    },
+                    reject = {
+                        try {
+                            webRTS.initiateCall()
+                        } catch (e: Exception) {
+                            Log.e("Call", e.message.toString())
+                        }
+                    }
+                )*/
+            }
+        composable(ScreenName.TextRecognixed) {
+           CameraScreen(context =context ,
+                tesseractViewModel =tesseractViewModel,
+            onClickEyes = {
+               navController.navigate(ScreenName.Eyes)
+               },
+               onClickCameraAndGallery = {
+                   navController.navigate(ScreenName.CameraAndGallery)
+               },
+
+               onBack = {
+                   navController.navigate(BottomBarScreen.Home.route)
+               })
+        }
+
 
             composable(ScreenName.UserCards) {
         //    Toast.makeText(context,cardVolonterViewModel.emailStateCardUser.value,Toast.LENGTH_SHORT).show()
@@ -136,6 +199,31 @@ fun BottomNavGraph(
                 context=context,
                 userType=userType
             )
+        }
+     composable(ScreenName.Eyes){
+         CameraPreview(
+             context = context,
+             tesseractViewModel = tesseractViewModel,
+             onClick = {
+                 navController.navigate(ScreenName.TextRecognixed)
+             },
+             onTextDetected = { text ->
+                 tesseractViewModel.text.value = text
+                 Log.d("CameraPreview", "Text detected: $text")
+             }
+         )
+        }
+
+        composable(ScreenName.CameraAndGallery){
+           GalleryAndCameraScreen(context = context,
+               tesseractViewModel = tesseractViewModel,
+               registrationViewModel = registrationViewModel,
+               onBack = {
+                   navController.navigate(ScreenName.TextRecognixed)
+
+               }
+
+           )
         }
 
         composable(ScreenName.volonterOrUserAdd){
