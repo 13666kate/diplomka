@@ -18,4 +18,10 @@ object ScreenName {
     val Eyes = "Eyes"
     val Camera = "Camera"
     val CameraAndGallery = "Gallery"
+    val Chat = "Chat"
+    val FrendList = "FrendList"
+    val VidioCall = "VidioCall"
+    val ListFrendVidio = "ListFrienVidio"
+    val Sos = "Sos"
+    val SosVolo = "SosVolo"
 }

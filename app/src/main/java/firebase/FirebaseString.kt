@@ -24,4 +24,16 @@ object FirebaseString {
     val request = "request"
     val expectation = "expectation"
 
+    val auchID = "auchID"
+    val friendID = "friendID"
+
+     val parentCollection = "parentCollection"
+     val chats = "chats"
+
+    val requestSos = "requestsos"
+    val idUser = "idUser"
+    val requestStatusSos = "requestStatusSos"
+    val currentTime = "currentTime"
+    val date = "date"
+
 }

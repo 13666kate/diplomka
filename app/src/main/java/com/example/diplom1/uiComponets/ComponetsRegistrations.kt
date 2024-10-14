@@ -47,6 +47,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -62,7 +63,9 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -74,11 +77,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import coil.compose.AsyncImage
+import com.example.diplom1.ShedPreferences
 import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.Orange
 import com.example.diplom1.ui.theme.colorOlivical
 import sence.kate.practica3.padding.Padding
 import viewModel.RegistrationViewModel
+import viewModel.TesseractViewModel
 
 
 class ComponetsRegistrations {
@@ -232,7 +237,7 @@ class ComponetsRegistrations {
             }
         }
     }
-
+   val tesseractViewModel = TesseractViewModel()
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
 
@@ -242,6 +247,7 @@ class ComponetsRegistrations {
         wight: Dp,
         height: Dp,
         label: Int,
+        stLabel:String?,
         paddingStart: Dp,
         paddingTop: Dp,
         paddingEnd: Dp,
@@ -255,64 +261,97 @@ class ComponetsRegistrations {
         picker: () -> Unit,
     ) {
         val focusManager = LocalFocusManager.current
-        TextField(
+        val context = LocalContext.current
+        val lifecycleOwner = LocalLifecycleOwner.current
+        LaunchedEffect(lifecycleOwner) {
+            tesseractViewModel.initializeTTS(context)
+            tesseractViewModel.handleLifecycle(context, lifecycleOwner)
 
-            value = state.value,
-            onValueChange = { newValue ->
-                state.value = newValue
-            },
-            modifier = Modifier
-                .padding(
-                    paddingStart,
-                    paddingTop,
-                    paddingEnd,
-                    paddingBottom,
-                )
-                .width(wight)
-                .height(height)
-                .background(background)
-                .onGloballyPositioned { coordinates ->
-                    //This value is used to assign to the DropDown the same width
-                    registrationViewModel.textSize.value = coordinates.size.toSize()
-                }
-                .clickable {
-                    picker()
+        }
+        Column(modifier =
+        Modifier.clickable {
+            if (stLabel != null) {
+                tesseractViewModel.speakText(stLabel)
+
+            }
+        }){
+
+
+            TextField(
+
+                value = state.value,
+                onValueChange = { newValue ->
+                    state.value = newValue
+                    tesseractViewModel.speakText(state.value)
                 },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Done,
-                keyboardType = keyboardType
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
-                    onDoneAction()//функция проверки правильного ввода
-                }),
-            label = {
-                Text(
-                    text = stringResource(label),
-                    color = labelColor.value,
-                    style = TextStyle(
-                        fontSize = Padding.textLabelSize,
-                        fontWeight = FontWeight.Bold,
-                    ),
-                )
-            },
-            placeholder = {
-                Text(
-                    text = stringResource(id = clueText),
-                    color = clueColor,
-                )
-            },
-            textStyle = TextStyle(colorOlivical, fontSize = Padding.textSize),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                unfocusedBorderColor = registrationViewModel.textLabelColor.value,
-                focusedBorderColor = registrationViewModel.textLabelColorClick.value,
-                focusedLabelColor = registrationViewModel.textLabelColorClick.value,
-                cursorColor = registrationViewModel.textLabelColorClick.value,
 
+                modifier = Modifier
+                    .padding(
+                        paddingStart,
+                        paddingTop,
+                        paddingEnd,
+                        paddingBottom,
+                    )
+                    .width(wight)
+                    .height(height)
+                    .background(background)
+                    .onGloballyPositioned { coordinates ->
+                        //This value is used to assign to the DropDown the same width
+                        registrationViewModel.textSize.value = coordinates.size.toSize()
+                    }
+                    .clickable {
+
+                        picker()
+
+                    }
+                  ,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done,
+                    keyboardType = keyboardType
                 ),
-        )
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
 
+                        onDoneAction()//функция проверки правильного ввода
+                    }),
+                label = {
+
+                    Text(
+                        modifier = Modifier
+                            .clickable {
+                                tesseractViewModel.speakText(stLabel!!)
+                            },
+                        text = stringResource(label),
+                        color = labelColor.value,
+                        style = TextStyle(
+                            fontSize = Padding.textLabelSize,
+                            fontWeight = FontWeight.Bold,
+                        ),
+                    )
+                },
+
+                placeholder = {
+                    Text(
+                        modifier = Modifier
+                            .clickable {
+                                tesseractViewModel.speakText(state.value)
+                            },
+                        text = stringResource(id = clueText),
+                        color = clueColor,
+                    )
+
+                },
+                textStyle = TextStyle(colorOlivical, fontSize = Padding.textSize),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    unfocusedBorderColor = registrationViewModel.textLabelColor.value,
+                    focusedBorderColor = registrationViewModel.textLabelColorClick.value,
+                    focusedLabelColor = registrationViewModel.textLabelColorClick.value,
+                    cursorColor = registrationViewModel.textLabelColorClick.value,
+
+                    ),
+            )
+        }
     }
 
     @Composable
@@ -431,6 +470,7 @@ class ComponetsRegistrations {
         stateOrPermissions: MutableState<Boolean>,
         regex: String,
         actions: () -> Unit,
+        stLabel:String?
 
         ) {
 
@@ -448,6 +488,7 @@ class ComponetsRegistrations {
             labelColor = labelColor,
             clueText = clueText,
             clueColor = clueColor,
+            stLabel = stLabel,
             onDoneAction = { actions() }) {
 
         }
@@ -581,6 +622,18 @@ class ComponetsRegistrations {
             )
         }
     }
+    fun stusTTs(context: Context):Boolean{
+        val ststusTTs = ShedPreferences.getShedPreferences(
+            context = context,
+            UserFileCollections = ShedPreferences.CollectionsTTs,
+            keyFile = ShedPreferences.keyTts)
+        return  if (ststusTTs ==ShedPreferences.yes){
+            true
+        }else{
+            false
+        }
+
+    }
 
     @Composable
     fun IconButtonImage(
@@ -602,7 +655,8 @@ class ComponetsRegistrations {
                 painter = icon,
                 contentDescription = "Add image",
                 modifier = Modifier
-                    .size(size),
+                    .size(size)
+                    .padding(8.dp),
                 tint = (iconColor),
             )
         }
@@ -627,6 +681,7 @@ class ComponetsRegistrations {
         size: Dp,
         textList:MutableState<String>,
         dropDownList:List<String>,
+        stLabel:String?
 
     ) {
 
@@ -659,7 +714,8 @@ class ComponetsRegistrations {
                 labelColor = labelColor,
                 clueText = clueText,
                 clueColor = clueColor,
-                onDoneAction = { onDoneAction() }) {
+                onDoneAction = { onDoneAction() },
+                stLabel = stLabel,) {
 
             }
 
@@ -668,10 +724,10 @@ class ComponetsRegistrations {
                 Modifier
                     .clickable
                     {
-                        try{
+                        try {
                             expanded.value = !
                             expanded.value
-                        }catch (e:Exception){
+                        } catch (e: Exception) {
                             Log.e("icon", e.message.toString())
                         }
 

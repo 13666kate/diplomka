@@ -63,28 +63,30 @@ android {
 dependencies {
 
 
-    implementation("com.google.firebase:firebase-storage:21.0.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:25.0.0")
+    implementation("com.google.firebase:firebase-storage:21.0.1")
+    implementation("com.google.firebase:firebase-firestore-ktx:25.1.0")
+    implementation ("com.google.firebase:firebase-appcheck:18.0.0")
+    implementation ("com.google.firebase:firebase-appcheck-playintegrity:18.0.0")
     implementation("com.google.android.gms:play-services-vision-common:19.1.3")
     // Camerax implementation
     val camerax_version = "1.4.0-alpha04"
 
-    implementation ("androidx.camera:camera-core:1.3.3")
-    implementation ("androidx.camera:camera-camera2:1.3.3")
-    implementation ("androidx.camera:camera-lifecycle:1.3.3")
+    implementation ("androidx.camera:camera-core:1.3.4")
+    implementation ("androidx.camera:camera-camera2:1.3.4")
+    implementation ("androidx.camera:camera-lifecycle:1.3.4")
     implementation("androidx.camera:camera-video:${camerax_version}")
     implementation("androidx.camera:camera-view:${camerax_version}")
     implementation("androidx.camera:camera-mlkit-vision:${camerax_version}")
     implementation("androidx.camera:camera-extensions:${camerax_version}")
     // Camerax implementation
-    implementation("com.google.android.gms:play-services-mlkit-text-recognition:19.0.0")
+    implementation("com.google.android.gms:play-services-mlkit-text-recognition:19.0.1")
     implementation("androidx.camera:camera-mlkit-vision:1.3.0-beta02")
     //для распознавания лиц
-    implementation("com.google.mlkit:face-detection:16.1.6")
+    implementation("com.google.mlkit:face-detection:16.1.7")
     //для распознавания лиц
     //база FirebaseФ
-    implementation("com.google.firebase:firebase-auth:22.3.1")
-    implementation("com.google.firebase:firebase-database:20.3.1")
+    implementation("com.google.firebase:firebase-auth:23.0.0")
+    implementation("com.google.firebase:firebase-database:21.0.0")
  //   implementation("com.google.firebase:firebase-firestore:24.11.1")
     implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
     implementation("com.google.firebase:firebase-analytics")
@@ -92,18 +94,19 @@ dependencies {
 
     //Tesseract
     implementation ("com.rmtheis:tess-two:9.1.0")
-     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.1")
-    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.1")
+     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6")
     // LiveData integration
-    implementation ("androidx.compose.runtime:runtime-livedata:1.6.7")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.1")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.7.3")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
 
         //   implementation ("com.google.android.gms:play-services-vision:20.1.3")
     //Tesseract
     //для видио
 
    // implementation ("org.webrtc:google-webrtc:1.0.32006")
-    implementation ("org.webrtc:google-webrtc:1.0.32006")
+   // implementation ("org.webrtc:google-webrtc:1.0.32006")
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
  //  implementation ("com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:+")
     //
        //  implementation ("org.jitsi.react:jitsi-meet-sdk:+")

@@ -282,9 +282,11 @@ fun GalleryAndCameraScreen(
                 tesseractViewModel.recognizeTextAsync(context, bitmap, "rus+eng+kir")
             }
         }
-        Column(  horizontalAlignment = Alignment.Start,
+        Column(
+            horizontalAlignment = Alignment.Start,
             modifier = Modifier
-                .padding(10.dp)) {
+                .padding(10.dp)
+        ) {
             componetsRegistrations.IconButton(
                 size = 60.dp,
                 icon = Icons.Default.ArrowBack,
@@ -323,8 +325,10 @@ fun GalleryAndCameraScreen(
                     activityResultLauncher = takePictureLauncher
                 )
 
-                Column(modifier = Modifier
-                    .padding(start = 20.dp, end = 20.dp)) {
+                Column(
+                    modifier = Modifier
+                        .padding(start = 20.dp, end = 20.dp)
+                ) {
                     componetsRegistrations.IconButtonImage(
                         size = iconSize,
                         icon = painterResource(id = R.drawable.baseline_add_photo_alternate_24),

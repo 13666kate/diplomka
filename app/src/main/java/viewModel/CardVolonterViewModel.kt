@@ -41,7 +41,7 @@ class CardVolonterViewModel : ViewModel() {
     val imageAvatarValueNo = mutableStateOf(R.drawable.baseline_account_circle_24)
     val imageStateBitmap = mutableStateOf<Bitmap?>(null)
 
-    val  saveID = mutableStateOf("")
+    val saveID = mutableStateOf("")
     val imageState = mutableStateOf<Bitmap?>(null)
     val uidFirestore = mutableStateListOf<String>()
     val list: MutableList<String> = mutableListOf()
@@ -77,11 +77,13 @@ class CardVolonterViewModel : ViewModel() {
     val listUserAddMe = mutableStateListOf<UserCardAdd>()
     val listAddUserMe = mutableStateListOf<UserCardAdd>()
     val listAdd = mutableStateListOf<UserCardAdd>()
+    val ListIDUser = mutableStateOf<List<String>>(emptyList())
 
-
-    fun loadData(cardVolonterViewModel: CardVolonterViewModel,
-                         context: Context,
-                         userType: UserType) {
+    fun loadData(
+        cardVolonterViewModel: CardVolonterViewModel,
+        context: Context,
+        userType: UserType
+    ) {
         viewModelScope.launch {
             // Загрузите списки данных асинхронно
             val userAddList = NotificationsUserAdd(
@@ -143,6 +145,7 @@ class CardVolonterViewModel : ViewModel() {
 
         return newlist
     }
+
     fun removeDuplicatesUserCardsFriends(
         list: List<UserCardFriend>,
         newlist: MutableList<UserCardFriend>
@@ -196,7 +199,7 @@ class CardVolonterViewModel : ViewModel() {
         }
     }
 
- /*   suspend fun doesDocumentWithFieldsExist(
+    /*   suspend fun doesDocumentWithFieldsExist(
         collectionName: String,
         fields: Map<String, Any>
     ): Boolean {
@@ -215,28 +218,29 @@ class CardVolonterViewModel : ViewModel() {
         }
     }
 */
- suspend fun doesDocumentWithFieldsExistExcludingField(
-     collectionName: String,
-     data: Map<String, Any>,
-     fieldToExclude: String
- ): Boolean {
-     return try {
-         val collectionRef = FirebaseFirestore.getInstance().collection(collectionName)
-         var query: Query = collectionRef // Начальная инициализация с коллекцией
+    suspend fun doesDocumentWithFieldsExistExcludingField(
+        collectionName: String,
+        data: Map<String, Any>,
+        fieldToExclude: String
+    ): Boolean {
+        return try {
+            val collectionRef = FirebaseFirestore.getInstance().collection(collectionName)
+            var query: Query = collectionRef // Начальная инициализация с коллекцией
 
-         data.forEach { (key, value) ->
-             if (key != fieldToExclude) {
-                 query = query.whereEqualTo(key, value)
-             }
-         }
+            data.forEach { (key, value) ->
+                if (key != fieldToExclude) {
+                    query = query.whereEqualTo(key, value)
+                }
+            }
 
-         val querySnapshot = query.get().await()
-         !querySnapshot.isEmpty
-     } catch (e: Exception) {
-         Log.e("FirestoreQuery", "Ошибка при выполнении запроса: ${e.message}")
-         false
-     }
- }
+            val querySnapshot = query.get().await()
+            !querySnapshot.isEmpty
+        } catch (e: Exception) {
+            Log.e("FirestoreQuery", "Ошибка при выполнении запроса: ${e.message}")
+            false
+        }
+    }
+
     fun requesAddUser(
         email: String,
         stateIdAuch: MutableState<String>,
@@ -272,13 +276,14 @@ class CardVolonterViewModel : ViewModel() {
                         for (document in querySnapshot.documents) {
                             val uidAuch = document.getString(FirebaseString.uidUserAuch).toString()
                             if (uidAuch.contains(stateIdAuch.value)) {
-                                val statusFriends = document.getString(FirebaseString.request).toString()
+                                val statusFriends =
+                                    document.getString(FirebaseString.request).toString()
 
-                                 if (statusFriends.contains(FirebaseString.expectation)){
-                                     Toast.makeText(context, "Он уже в друзьях", Toast.LENGTH_SHORT)
-                                         .show()
-                                     }
-                            }else {
+                                if (statusFriends.contains(FirebaseString.expectation)) {
+                                    Toast.makeText(context, "Он уже в друзьях", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            } else {
                                 nameCollections(context = context, userType = userType)
                                 val newDocument = FirebaseFirestore.getInstance()
                                     .collection(userCollections)
@@ -291,7 +296,11 @@ class CardVolonterViewModel : ViewModel() {
                                     FirebaseString.email to email
                                 )
                                 val existDocument =
-                                    doesDocumentWithFieldsExistExcludingField(userCollections,data, FirebaseString.request)
+                                    doesDocumentWithFieldsExistExcludingField(
+                                        userCollections,
+                                        data,
+                                        FirebaseString.request
+                                    )
                                 if (existDocument) {
 
                                     Toast.makeText(
@@ -321,7 +330,11 @@ class CardVolonterViewModel : ViewModel() {
                             FirebaseString.email to email
                         )
                         val existDocument =
-                            doesDocumentWithFieldsExistExcludingField(userCollections,data, FirebaseString.request)
+                            doesDocumentWithFieldsExistExcludingField(
+                                userCollections,
+                                data,
+                                FirebaseString.request
+                            )
                         if (existDocument) {
 
                             Toast.makeText(
@@ -335,7 +348,6 @@ class CardVolonterViewModel : ViewModel() {
                             Toast.makeText(context, "Запрос  отправлен", Toast.LENGTH_SHORT)
                                 .show()
                         }
-
 
 
                     }
@@ -426,7 +438,7 @@ class CardVolonterViewModel : ViewModel() {
     val userCardAdd: MutableList<UserCardAdd> = mutableStateListOf()
 
     //функция для просмотра, кому отправлен запрос
-   fun UserViewingAddMe(
+    fun UserViewingAddMe(
         cardVolonterViewModel: CardVolonterViewModel,
         context: Context,
         userType: UserType,
@@ -464,6 +476,90 @@ class CardVolonterViewModel : ViewModel() {
 
         }
         return userCardAdd
+    }
+
+    fun idByEmailSearch(
+        stringSearch: String,
+        context: Context,
+        userType: UserType,
+        uidByStringSave: MutableState<String>,
+        nameFileInCollectionSearch: String,
+        //onResult: (Boolean) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val status = ShedPreferences.getUserType(context)
+                val nameCollections = if (status == userType.UserBlind.value) {
+                    NameCollactionFirestore.UsersVolonters
+                } else {
+                    NameCollactionFirestore.UsersBlind
+                }
+                if (stringSearch.isNotEmpty()) {
+                    val query = FirebaseFirestore.getInstance().collection(nameCollections)
+                        .whereEqualTo(nameFileInCollectionSearch, stringSearch)
+                        .get()
+                        .await()
+                    if (!query.isEmpty) {
+                        val uid = query.documents[0].id
+                        uidByStringSave.value = uid
+                        Log.d("call", "Found UID: $uid")
+                        //  onResult(true)
+                    } else {
+                        Log.e("call", "Document not found")
+                        // onResult(false)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("call", "Error: ${e.message}")
+                //    onResult(false)
+            }
+        }
+    }
+
+    suspend fun idByEmailSearchList(
+        stringSearch: String,
+        context: Context,
+        userType: UserType, // Список для хранения UID
+        nameFileInCollectionSearch: String
+    ) :List<String>{
+        val uidResultList = mutableListOf<String>()
+
+            try {
+                val status = ShedPreferences.getUserType(context)
+                val nameCollections = if (status == userType.UserBlind.value) {
+                    NameCollactionFirestore.UsersVolonters
+                } else {
+                    NameCollactionFirestore.UsersBlind
+                }
+                if (stringSearch.isNotEmpty()) {
+                    val query = FirebaseFirestore.getInstance().collection(nameCollections)
+                        .whereEqualTo(nameFileInCollectionSearch, stringSearch)
+                        .get()
+                        .await()
+
+
+
+                    for (document in query.documents) {
+                        val uid = document.id
+                        uidResultList.add(uid)
+                        // Логируем найденные UID
+                        Log.d("listil", "Found UID: $uid")
+                    }
+
+                    // Обновляем состояние списка UID в основном потоке
+                    // withContext(Dispatchers.Main) {
+                    // uidList.addAll(uidResultList)
+                    /*  Log.d(
+                            "listil",
+                            "Updated UID list: $uidResultList"
+                        ) // Логируем обновленный список UID
+                    }
+             //   }*/
+                }
+            } catch (e: Exception) {
+                Log.e("listil", "Error: ${e.message}")
+            }
+        return  uidResultList
     }
 
     //функкия для принятия волонтера или пользователя

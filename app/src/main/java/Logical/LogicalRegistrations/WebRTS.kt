@@ -1,5 +1,5 @@
 
-import android.content.Context
+/*import android.content.Context
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import firebase.FirebaseRegistrations
@@ -132,4 +132,6 @@ class WebRTS(cardVolonterViewModel: CardVolonterViewModel) {
     private fun IceCandidate.toMap(): Map<String, Any> {
         return mapOf("sdpMid" to sdpMid, "sdpMLineIndex" to sdpMLineIndex, "candidate" to sdp)
     }
-}
+//}
+
+ */

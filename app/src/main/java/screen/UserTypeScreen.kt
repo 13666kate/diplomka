@@ -2,10 +2,10 @@
 package screen
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,27 +24,35 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleOwner
 import com.example.diplom1.R
 import com.example.diplom1.ShedPreferences
 import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.colorOlivical
 import sence.kate.practica3.padding.Padding
-import viewModel.LoginViewModel
+import viewModel.TesseractViewModel
 import viewModel.UserType
 
-
+ val tesseractViewModelO = TesseractViewModel()
 @Composable
 fun UserType(
             onclickButtonTypeBlind:()->Unit,
             onclickButtonTypeVolonter:()->Unit,
             context:Context,
-            userType: UserType
+            userType: UserType,
+            tesseractViewModel:TesseractViewModel,
+            lifecycleOwner: LifecycleOwner
              ) {
+ //   val lifecycleOwner = LocalLifecycleOwner.current
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BlueBlack),
+            .background(BlueBlack)
+            .clickable {
+                tesseractViewModel.speakText("Здравствуйте, вас приведствует приложение Sighted peple В середине" +
+                        "экрана расположены две кнопки, выберите тип пользователя")
+            },
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     )
@@ -56,6 +64,7 @@ fun UserType(
        modifier = Modifier
            .size(290.dp))
         Button(onClick = {
+
             onclickButtonTypeBlind()
             val status= ShedPreferences.getUserTypeStatus(context)
           userType.userTypeTrue()
@@ -67,6 +76,9 @@ fun UserType(
                 .padding(Padding.paddingNormalTen,Padding.tvelv,Padding.paddingNormalTen),
             colors = ButtonDefaults.buttonColors(colorOlivical)) {
           Text(text = stringResource(R.string.userBlind ),
+              modifier = Modifier.clickable {
+                  tesseractViewModel.speakText("Пользователь")
+              },
               style = TextStyle(
                   color = BlueBlack,
                   fontSize = Padding.textSize,
@@ -76,6 +88,7 @@ fun UserType(
 
         }
         Button(onClick = {
+            tesseractViewModel.speakText("Волонтер")
           userType.userTypeFalse()
             onclickButtonTypeVolonter()
             ShedPreferences.saveUserTypeStatus(context,ShedPreferences.userFalse)
@@ -86,6 +99,9 @@ fun UserType(
                 .padding(Padding.paddingNormalTen,Padding.tvelv,Padding.paddingNormalTen),
             colors = ButtonDefaults.buttonColors(colorOlivical)) {
             Text(text = stringResource(R.string.userVolonter),
+                modifier = Modifier.clickable {
+                    tesseractViewModel.speakText("Волонтер")
+                },
                 style = TextStyle(
                     color = BlueBlack,
                     fontSize = Padding.textSize,

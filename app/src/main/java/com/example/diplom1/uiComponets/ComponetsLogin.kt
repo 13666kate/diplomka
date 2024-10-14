@@ -1,12 +1,16 @@
 package com.example.diplom1.uiComponets
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -14,28 +18,24 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.Dp
-import viewModel.LoginViewModel
-import com.example.diplom1.ui.theme.colorOlivical
-import sence.kate.practica3.padding.Padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import com.example.diplom1.R
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
+import com.example.diplom1.ui.theme.colorOlivical
+import sence.kate.practica3.padding.Padding
+import viewModel.LoginViewModel
+import viewModel.TesseractViewModel
 
 class ComponetsLogin {
 
@@ -50,6 +50,8 @@ class ComponetsLogin {
         height: Dp,
         padding: Dp,
         labelText: Int,
+        text:String,
+        tesseractViewModel: TesseractViewModel,
 
 
         ) {
@@ -58,16 +60,22 @@ class ComponetsLogin {
             state.value,
             onValueChange = { newLogin ->
                 state.value = newLogin
+                tesseractViewModel.speakText( state.value)
             },
             singleLine = true,
             textStyle = TextStyle(colorOlivical, fontSize = Padding.textSize),
             modifier = modifier
                 .padding(padding)
                 .width(wight)
-                .height(height),
+                .height(height)
+                ,
             label = {
                 Text(
                     text = stringResource(labelText),
+                    modifier = Modifier.
+                        clickable {
+                            tesseractViewModel.speakText(text = text)
+                        },
                     color = colorOlivical,
                     style = TextStyle(
                         fontSize = Padding.textLabelSize,
@@ -129,6 +137,8 @@ class ComponetsLogin {
         paddingStart: Dp,
         paddingTop: Dp,
         paddingEnd: Dp,
+        text: String,
+        tesseractViewModel: TesseractViewModel,
         onClick: () -> Unit
     ) {
         Text(
@@ -137,6 +147,8 @@ class ComponetsLogin {
                 .padding(paddingStart, paddingTop, paddingEnd)
                 .clickable {
                     viewModel.setTextColor()
+                    tesseractViewModel.speakText(text = text)
+
                     onClick()},
             style = TextStyle(
                 color = viewModel.textColor.value,

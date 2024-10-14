@@ -2,38 +2,32 @@
 
 package screen
 
-import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.example.diplom1.R
-import com.example.diplom1.uiComponets.ComponetsLogin
-import viewModel.LoginViewModel
 import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.colorOlivical
-import firebase.FirebaseRegistrations
+import com.example.diplom1.uiComponets.ComponetsLogin
 import sence.kate.practica3.padding.Padding
-import viewModel.CardVolonterViewModel
-import viewModel.UserType
+import viewModel.LoginViewModel
+import viewModel.TesseractViewModel
 
 val componets = ComponetsLogin();
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel,
     onClickRegistrations: () -> Unit,
     onClickLogin: () -> Unit,
+    tesseractViewModel: TesseractViewModel
 
     //nameNavagateHome:String
 ){
@@ -43,6 +37,11 @@ fun LoginScreen(
      Column(
          modifier = Modifier
              .fillMaxSize()
+             .clickable {
+                 tesseractViewModel.speakText("Вы на экране регистрации, в середине экрана" +
+                         "расположенны две кнопки для ввода Email и пароля, если вы еще не зарегистрированны," +
+                         "нажмите на кнопку регистрации в конце экрана ")
+             }
              .background(Color(BlueBlack.value)),
 
          verticalArrangement = Arrangement.Center,
@@ -63,8 +62,10 @@ fun LoginScreen(
              wight = Padding.widthOutlineLoginScreen,
              height = Padding.heightOutlineLoginScreen,
              padding = Padding.paddingNormalTen,
-             labelText = R.string.Login,
-             colorOutline = loginViewModel.ColorOtline
+             labelText = R.string.Email,
+             colorOutline = loginViewModel.ColorOtline,
+             tesseractViewModel = tesseractViewModel,
+             text = "Email"
 
              )
          componets.OutlineTextField(
@@ -75,6 +76,8 @@ fun LoginScreen(
              padding = Padding.paddingNormalTen,
              labelText = R.string.Password,
              colorOutline = loginViewModel.ColorOtline,
+             tesseractViewModel = tesseractViewModel,
+             text = "Пароль"
             )
          componets.Button(
              wight = Padding.widthButtonLoginScreen,
@@ -85,7 +88,7 @@ fun LoginScreen(
              labelText = R.string.Vfod,
              onClick = {
                     onClickLogin()
-
+                 tesseractViewModel.speakText("Вход")
 
                      },
              paddingStart = Padding.paddingSmall,
@@ -101,6 +104,8 @@ fun LoginScreen(
              onClick ={ onClickRegistrations()},
              paddingTop =Padding.textTopRegistration ,
              paddingEnd = Padding.tvelv,
+             text = "Еще не зарегистрированы? Регистрация",
+             tesseractViewModel = tesseractViewModel
          )
      }
 }

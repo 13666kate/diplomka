@@ -4,8 +4,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Region
-
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -15,9 +13,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import com.example.diplom1.R
-import com.example.diplom1.ShedPreferences
 import com.example.diplom1.ui.theme.Red
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -25,7 +23,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import viewModel.HomeScreenViewModel
-import viewModel.LoginViewModel
 import viewModel.RegistrationViewModel
 import viewModel.UserType
 
@@ -162,12 +159,12 @@ class FirebaseRegistrations {
 
                                 } else {
                                     // Пароль не совпадает
-                                 //   Toast.makeText(context, "Неверный логин или пароль ${UserType().userType.value}",
-                                    //    Toast.LENGTH_SHORT).show()
+                                   Toast.makeText(context, "Неверный логин или пароль ${UserType().userType.value}",
+                                        Toast.LENGTH_SHORT).show()
                                 }
                             } else {
                                 // Документ не найден
-                               // Toast.makeText(context, "Данные пользователя не найдены${UserType().userType.value}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Данные пользователя не найдены${UserType().userType.value}", Toast.LENGTH_SHORT).show()
                             }
 
                         }
@@ -177,11 +174,11 @@ class FirebaseRegistrations {
                         textNoRegistrations.value = R.string.noRegistrations
                         Toast.makeText(context, R.string.noRegistrations, Toast.LENGTH_SHORT)
                             .show()
-                    } /*else if (error is FirebaseAuthInvalidCredentialsException) {
+                    } else if (error is FirebaseAuthInvalidCredentialsException) {
                         textNoRegistrations.value = R.string.ErrorPassword
                         Toast.makeText(context,  R.string.ErrorPassword, Toast.LENGTH_SHORT)
                             .show()
-                    }*/
+                    }
                 }
             }
     }

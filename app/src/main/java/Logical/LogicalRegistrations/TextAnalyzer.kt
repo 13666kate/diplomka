@@ -24,7 +24,7 @@ class TextAnalyzer(
         if (bitmap != null) {
             isProcessing = true
             try {
-                val enhancedBitmap = TesseractViewModel().enhanceBitmap(bitmap)
+                val enhancedBitmap = tesseractViewModel.enhanceBitmap(bitmap)
                 val recognizedText =
                     tesseractViewModel.startRecognized(context, enhancedBitmap, "rus+eng+kir")
 

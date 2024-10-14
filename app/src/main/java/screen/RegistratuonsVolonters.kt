@@ -3,10 +3,10 @@ package screen
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.diplom1.R
-import com.example.diplom1.ShedPreferences
 import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.Grey
 import com.example.diplom1.ui.theme.colorOlivical
@@ -35,7 +34,6 @@ import firebase.NameCollactionFirestore
 import sence.kate.practica3.padding.Padding
 import viewModel.RegistrationViewModel
 import viewModel.UserType
-import androidx.compose.foundation.layout.Row
 @Composable
 fun RegistrationVolonters(
     registrationViewModel: RegistrationViewModel,
@@ -140,6 +138,7 @@ fun RegistrationVolonters(
                 clueText = R.string.FestNameClue,
                 picker = {},
                 clueColor = Grey,
+                stLabel = null,
                 onDoneAction = {
                     clueName
                 }
@@ -160,6 +159,7 @@ fun RegistrationVolonters(
                 clueText = R.string.LastNameClue,
                 picker = {},
                 clueColor = Grey,
+                stLabel = null,
                 onDoneAction = {
                     clueSurname
                 }
@@ -180,6 +180,7 @@ fun RegistrationVolonters(
                 clueText = R.string.LoginClue,
                 clueColor = Grey,
                 picker = {},
+                stLabel = null,
                 onDoneAction = {
                     clueLogin
                 }
@@ -196,11 +197,13 @@ fun RegistrationVolonters(
                 label = R.string.Organization,
                 labelColor = registrationViewModel.textColorList,
                 clueColor = Grey,
+                stLabel = null,
                 clueText = R.string.OrcanizationsClue,
                 background = BlueBlack,
                 size = 30.dp,
                 textList = registrationViewModel.organizationVolonter,
                 dropDownList = registrationViewModel.nameOrganizationList,
+
                 onDoneAction = {
                     clueOrganization
                 }
@@ -221,6 +224,7 @@ fun RegistrationVolonters(
                 clueText = R.string.PasswordlClue,
                 clueColor = Grey,
                 picker = {},
+                stLabel = null,
                 onDoneAction = {
                     cluePassword
                 }
@@ -241,6 +245,7 @@ fun RegistrationVolonters(
                 clueText = R.string.EmailClue,
                 clueColor = Grey,
                 picker = {},
+                stLabel = null,
                 onDoneAction = {
                     clueEmail
                 }
@@ -261,6 +266,7 @@ fun RegistrationVolonters(
                 clueText = R.string.NumberClue,
                 clueColor = Grey,
                 picker = {},
+                stLabel = null,
                 onDoneAction = {
                     clueNumber
                 })
@@ -286,6 +292,7 @@ fun RegistrationVolonters(
                     clueText = R.string.DateBirthdayClue,
                     clueColor = Grey,
                     picker = {},
+                    stLabel = null,
                     onDoneAction = {
                         clueDate
 
@@ -322,6 +329,7 @@ fun RegistrationVolonters(
                     stateImage = registrationViewModel.imageBitmapTextRecognId,
                     stateOrPermissions = registrationViewModel.isCameraPermission,
                     regex = "\\bID\\d+\\b",
+                    stLabel = null,
                     actions = {
                         clueIdCard
                     }
@@ -354,6 +362,7 @@ fun RegistrationVolonters(
                     stateImage = registrationViewModel._imageBitmapTextRecognPin,
                     stateOrPermissions = registrationViewModel.isCameraPermission,
                     regex = """^\d{14}$""",
+                    stLabel = null,
                     actions = {
                         cluePinCard
                     }
@@ -373,6 +382,7 @@ fun RegistrationVolonters(
                 clueText = R.string.RegionClue,
                 background = BlueBlack,
                 size = iconSize,
+                stLabel = null,
                 textList = registrationViewModel.region,
                 dropDownList = registrationViewModel.nameRegionList,
                 onDoneAction = {
@@ -393,6 +403,7 @@ fun RegistrationVolonters(
                 clueText = R.string.RayonClue,
                 background = BlueBlack,
                 size = iconSize,
+                stLabel = null,
                 textList = registrationViewModel.rayon,
                 dropDownList = registrationViewModel.nameRayonList,
                 onDoneAction = {
@@ -415,6 +426,8 @@ fun RegistrationVolonters(
                 clueText = R.string.YersVolonrersClue,
                 clueColor = Grey,
                 picker = {},
+                stLabel = null,
+
                 onDoneAction = {
                     clueExpVolonter
 
@@ -436,6 +449,7 @@ fun RegistrationVolonters(
                 clueText = R.string.Adress,
                 clueColor = Grey,
                 picker = {},
+                stLabel = null,
                 onDoneAction = {
                     clueAdress
 
@@ -456,6 +470,7 @@ fun RegistrationVolonters(
                 clueText = R.string.AboutMe,
                 clueColor = Grey,
                 picker = {},
+                stLabel = null,
                 onDoneAction = {
                     clueAdress
 

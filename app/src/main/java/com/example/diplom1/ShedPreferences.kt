@@ -2,7 +2,6 @@ package com.example.diplom1
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 
@@ -40,6 +39,14 @@ object ShedPreferences {
 
     const val listUserSee = "listUserSee"
     const val keylistUserAdd = "listUserAdd"
+
+    const val CollectionsTTs = "TTS"
+    const val keyTts = "TTSkey"
+    const val buttonState = "buttonState"
+
+    const val CollectionsBrayl = "Brayl"
+    const val braylKey = "Braylkey"
+    const val buttonStateBrayl = "buttonStateBrayl"
     fun saveUserType(context: Context, userType: String) {
         val prefs: SharedPreferences = context.getSharedPreferences(userFile, Context.MODE_PRIVATE)
         prefs.edit().putString(userTypes, userType).apply()
@@ -79,6 +86,17 @@ object ShedPreferences {
         return prefs.getString(userFileStatus, statusNoAuth.value)
     }
 
+    // Сохранение предпочтений
+    fun saveShedPreferencesL(context: Context, UserFileCollections: String, keyFile: String, value: String) {
+        val prefs: SharedPreferences = context.getSharedPreferences(UserFileCollections, Context.MODE_PRIVATE)
+        prefs.edit().putString(keyFile, value).apply()
+    }
+
+    // Получение предпочтений
+    fun getShedPreferencesL(context: Context, UserFileCollections: String, keyFile: String, defaultValue: String? = null): String? {
+        val prefs: SharedPreferences = context.getSharedPreferences(UserFileCollections, Context.MODE_PRIVATE)
+        return prefs.getString(keyFile, defaultValue)
+    }
     fun logoutUser(context: Context) {
         ShedPreferences.saveUserType(context, ShedPreferences.statusNoAuth.value)
     }

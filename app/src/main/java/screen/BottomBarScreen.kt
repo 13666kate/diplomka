@@ -3,6 +3,7 @@ package screen
 import DataClass.BottomBarScreen
 import android.content.Context
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -31,17 +33,20 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.diplom1.navigations.BottomNavGraph
+import com.example.diplom1.navigations.NavigationsMainActivity
 import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.Orange
 import com.example.diplom1.ui.theme.colorOlivical
 import sence.kate.practica3.padding.Padding
 import viewModel.BottomNavigationViewModel
 import viewModel.CardVolonterViewModel
+import viewModel.ChatViewModel
 import viewModel.HomeScreenViewModel
 import viewModel.ProfileViewModel
 import viewModel.RegistrationViewModel
 import viewModel.TesseractViewModel
 import viewModel.UserType
+import viewModel.VideoCallViewModel
 
 @Composable
 fun BottomBarScreen(
@@ -50,11 +55,15 @@ fun BottomBarScreen(
     cardVolonterViewModel: CardVolonterViewModel,
     profileViewModel: ProfileViewModel,
     registrationViewModel: RegistrationViewModel,
+    chatViewModel: ChatViewModel,
+    videoCallViewModel: VideoCallViewModel,
     nameNavigate: String,
+    mainActivity: NavigationsMainActivity,
     userType: UserType,
     context: Context,
     navControllers: NavController,
-    tesseractViewModel: TesseractViewModel
+    tesseractViewModel: TesseractViewModel,
+    lifecycleOwner: LifecycleOwner
 ) {
     val navController = rememberNavController()
     Surface(color = colorOlivical) {
@@ -68,6 +77,7 @@ fun BottomBarScreen(
                     cardVolonterViewModel=cardVolonterViewModel,
                     context=context,
                     userType=userType,
+                    tesseractViewModel = tesseractViewModel
 
                 )
             }
@@ -84,7 +94,12 @@ fun BottomBarScreen(
                 bottomNavigationViewModel = bottomNavigationViewModel,
                 profileViewModel = profileViewModel,
                 tesseractViewModel = tesseractViewModel,
-                registrationViewModel = registrationViewModel
+                registrationViewModel = registrationViewModel,
+                chatViewModel = chatViewModel,
+                videoCallViewModel = videoCallViewModel,
+                mainActivity = mainActivity,
+                lifecycleOwner = lifecycleOwner
+
 
             )
         }
@@ -99,7 +114,8 @@ fun BottomBar(
     bottomNavigationViewModel: BottomNavigationViewModel,
     context: Context,
     userType: UserType,
-    cardVolonterViewModel: CardVolonterViewModel
+    cardVolonterViewModel: CardVolonterViewModel,
+    tesseractViewModel: TesseractViewModel,
 ) {
   val screenIcon =   bottomNavigationViewModel.ScreenIcon(context = context, userType = userType)
     val screens = listOf(
@@ -130,7 +146,8 @@ fun BottomBar(
                 screens = screen,
                 currentDestination = currentDestinations,
                 navController = navController,
-                bottomNavigationViewModel
+                bottomNavigationViewModel,
+                tesseractViewModel = tesseractViewModel
 
             )
 
@@ -144,7 +161,8 @@ fun RowScope.AddItem(
     screens: BottomBarScreen,
     currentDestination: NavDestination?,
     navController: NavHostController,
-    bottomNavigationViewModel: BottomNavigationViewModel
+    bottomNavigationViewModel: BottomNavigationViewModel,
+    tesseractViewModel: TesseractViewModel
 ) {
 
     BottomNavigationItem(
@@ -153,6 +171,7 @@ fun RowScope.AddItem(
         modifier = Modifier.padding(top = 6.dp),
         label = {
             Text(
+
                 text = screens.title,
                 style = TextStyle(
                     fontSize = Padding.textLabelSize,
@@ -166,6 +185,9 @@ fun RowScope.AddItem(
                 contentDescription = "navigate icon ",
                 modifier = Modifier
                     .size(40.dp)
+                    .clickable {
+                        tesseractViewModel.speakText(screens.title)
+                    }
 
             )
         },

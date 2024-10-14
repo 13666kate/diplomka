@@ -5,8 +5,8 @@ package screen
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,16 +20,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.diplom1.R
-import com.example.diplom1.ShedPreferences
 import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.Grey
 import com.example.diplom1.ui.theme.colorOlivical
@@ -40,6 +41,7 @@ import com.google.firebase.storage.FirebaseStorage
 import firebase.NameCollactionFirestore
 import sence.kate.practica3.padding.Padding
 import viewModel.RegistrationViewModel
+import viewModel.TesseractViewModel
 import viewModel.UserType
 
 val componetsRegistrations = ComponetsRegistrations()
@@ -53,9 +55,20 @@ fun RegistrationBlind(
     registrationViewModel: RegistrationViewModel,
     onClickNavigate: () -> Unit,
     context: Context,
-    userType: UserType
+    userType: UserType,
+    tesseractViewModel:TesseractViewModel
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+// Инициализация TTS и привязка к жизненному циклу
+    LaunchedEffect(lifecycleOwner) {
+        tesseractViewModel.initializeTTS(context)
+        tesseractViewModel.handleLifecycle(context, lifecycleOwner)
 
+    }
+    if (tesseractViewModel.dt.value) {
+        tesseractViewModel.speakText("Чтобы завершить регистрацию заполните поля")
+        tesseractViewModel.dt.value = true
+    }
     val clueLogin = registrationViewModel.clueLogin(
         textEmail = registrationViewModel.login,
         textColor = registrationViewModel.textColorLogin
@@ -112,11 +125,18 @@ fun RegistrationBlind(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(BlueBlack.value))
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .clickable {
+                       tesseractViewModel.speakText("вы на экране регистрации, чтобы зарегестрироваться заполните поля ")
+            },
 
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+
+
+       //     tesseractViewModel.speakText("Чтобы завершить регистрацию заполните поля")
 
         componetsRegistrations.PhotoPicker(
             height = Padding.heightImageRegistrationScreen,
@@ -149,10 +169,14 @@ fun RegistrationBlind(
             keyboardType = KeyboardType.Password,
             labelColor = registrationViewModel.textColorLabelFestName,
             clueText = R.string.FestNameClue,
-            picker = {},
+            picker = {
+               // tesseractViewModel.speakText("Имя")
+            },
             clueColor = Grey,
-            onDoneAction = {
+            stLabel = "Имя начинается с большой буквы"
+            , onDoneAction = {
                 clueName
+
             }
         )
         componetsRegistrations.TextField(
@@ -171,6 +195,7 @@ fun RegistrationBlind(
             clueText = R.string.LastNameClue,
             picker = {},
             clueColor = Grey,
+            stLabel = "Фамилия начинается с большой буквы",
             onDoneAction = {
                 clueSurname
             }
@@ -191,6 +216,7 @@ fun RegistrationBlind(
             clueText = R.string.LoginClue,
             clueColor = Grey,
             picker = {},
+            stLabel = "Логин начинается с большой буквы",
             onDoneAction = {
                 clueLogin
             }
@@ -212,6 +238,7 @@ fun RegistrationBlind(
             clueText = R.string.PasswordlClue,
             clueColor = Grey,
             picker = {},
+            stLabel = "Пароль из 6 символов",
             onDoneAction = {
                 cluePassword
             }
@@ -232,6 +259,7 @@ fun RegistrationBlind(
             clueText = R.string.EmailClue,
             clueColor = Grey,
             picker = {},
+            stLabel = "Email ",
             onDoneAction = {
                 clueEmail
             }
@@ -252,6 +280,7 @@ fun RegistrationBlind(
             clueText = R.string.NumberClue,
             clueColor = Grey,
             picker = {},
+            stLabel = "номер начинается кода +996",
             onDoneAction = {
                 clueNumber
             })
@@ -275,7 +304,12 @@ fun RegistrationBlind(
                 labelColor = registrationViewModel.textLabelColorDate,
                 clueText = R.string.DateBirthdayClue,
                 clueColor = Grey,
-                picker = {},
+                picker = {
+
+                        tesseractViewModel.speakText("имя")
+
+                },
+                stLabel = "Дата рождения в формате 02/10/2002",
                 onDoneAction = {
                     clueDate
 
@@ -312,6 +346,7 @@ fun RegistrationBlind(
                 stateImage = registrationViewModel.imageBitmapTextRecognId,
                 stateOrPermissions = registrationViewModel.isCameraPermission,
                 regex = "\\bID\\d+\\b",
+                stLabel = "номер пасорта начинается ID и состоит из 7цифр формат ID2525648",
                 actions = {
                     clueIdCard
                 }
@@ -344,6 +379,7 @@ fun RegistrationBlind(
                 stateImage = registrationViewModel._imageBitmapTextRecognPin,
                 stateOrPermissions = registrationViewModel.isCameraPermission,
                 regex = """^\d{14}$""",
+                stLabel = "идентификационный номер пасспорта 14цифр",
                 actions = {
                     cluePinCard
                 }
@@ -365,6 +401,7 @@ fun RegistrationBlind(
             size = iconSize,
             textList = registrationViewModel.region,
             dropDownList = registrationViewModel.nameRegionList,
+            stLabel = "Область проживания",
             onDoneAction = {
                 clueListRayon
             }
@@ -385,6 +422,7 @@ fun RegistrationBlind(
             size = iconSize,
             textList = registrationViewModel.rayon,
             dropDownList = registrationViewModel.nameRayonList,
+            stLabel = "Район проживания",
             onDoneAction = {
                 clueListRegion
             })
@@ -405,6 +443,7 @@ fun RegistrationBlind(
             labelColor = registrationViewModel.textColorAdress,
             clueText = R.string.Adress,
             clueColor = Grey,
+            stLabel = "Адресс проживания",
             picker = {},
             onDoneAction = {
                 clueAdress
@@ -457,6 +496,10 @@ fun RegistrationBlind(
         )
         {
             Text(
+                modifier = Modifier
+                    .clickable {
+                               tesseractViewModel.speakText("Кнопка вход")
+                    },
                 text = "Вход",
                 color = BlueBlack,
                 fontSize = Padding.textSize,

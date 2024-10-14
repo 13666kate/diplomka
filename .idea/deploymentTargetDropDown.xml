@@ -7,19 +7,7 @@
       </entry>
       <entry key="app">
         <State>
-          <runningDeviceTargetSelectedWithDropDown>
-            <Target>
-              <type value="RUNNING_DEVICE_TARGET" />
-              <deviceKey>
-                <Key>
-                  <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\user\.android\avd\kate.avd" />
-                </Key>
-              </deviceKey>
-            </Target>
-          </runningDeviceTargetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-06-11T20:10:59.652929800Z" />
-          <targetsSelectedWithDialog>
+          <targetSelectedWithDropDown>
             <Target>
               <type value="QUICK_BOOT_TARGET" />
               <deviceKey>
@@ -29,12 +17,24 @@
                 </Key>
               </deviceKey>
             </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-06-26T00:23:39.082818800Z" />
+          <targetsSelectedWithDialog>
             <Target>
               <type value="QUICK_BOOT_TARGET" />
               <deviceKey>
                 <Key>
                   <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\user\.android\avd\kate.avd" />
+                  <value value="C:\Users\user\.android\avd\kate2.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\user\.android\avd\kate_1.avd" />
                 </Key>
               </deviceKey>
             </Target>

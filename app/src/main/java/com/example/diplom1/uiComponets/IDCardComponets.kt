@@ -5,8 +5,6 @@ import DataClass.UserCardFriend
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -29,8 +26,6 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,24 +43,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.diplom1.ShedPreferences
 import com.example.diplom1.ui.theme.Black
 import com.example.diplom1.ui.theme.BlueBlack
 import com.example.diplom1.ui.theme.Grey
 import com.example.diplom1.ui.theme.colorOlivical
-import com.google.android.datatransport.cct.StringMerger
-import com.google.firebase.firestore.auth.User
 import firebase.FireBaseIDCardUser
+import firebase.FirebaseString
 import firebase.NameCollactionFirestore
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
-import org.checkerframework.checker.units.qual.Current
-import screen.Row
 import sence.kate.practica3.padding.Padding
 import viewModel.CardVolonterViewModel
 import viewModel.RegistrationViewModel
@@ -201,74 +187,29 @@ class IDCardComponets {
         context: Context,
         cardVolonterViewModel: CardVolonterViewModel,
         userType: UserType,
-        onClick: () -> Unit,
+        onClick: () -> Unit,  // Принимаем ID друга как параметр
     ) {
-        val list: MutableList<UserCardFriend> = remember { mutableListOf<UserCardFriend>() }
-        // Состояние для хранения данных списка друзей
+        // Состояние для хранения списка друзей
         val friendListState = remember { mutableStateOf<List<UserCardFriend>>(emptyList()) }
-        val status = ShedPreferences.getShedPreferences(
-            context = context,
-            UserFileCollections = ShedPreferences.FileCollectionsListFriend,
-            keyFile = ShedPreferences.FileListAdd
-        )
+        val list = friendListState.value
 
-        LaunchedEffect(Unit){
-            list.clear()
-            val user = ShedPreferences.getUserType(context = context)
-           // if (user == ShedPreferences.statusNoAuth.value){
-
-         //   }
-              //  cardVolonterViewModel.friendList.clear()
-
-            //if (status == ShedPreferences.listAddYes) {
-            val d =FireBaseIDCardUser().getFriendList(
-                context, userType, cardVolonterViewModel)
-
-                list.addAll(d)
-            cardVolonterViewModel.removeDuplicatesUserCardsFriends(list,cardVolonterViewModel.friendList)
-
-           //     cardVolonterViewModel.friendList.addAll(list)
-             //   cardVolonterViewModel.friendList.addAll(list)
-          //  } else {
-           /* AddVolonter(
-                navController = navController,
-                nameScreen = nameScreenAddUser,*/
-
-      //  }
-        }
-        val statusList = ShedPreferences.getShedPreferences(
-            context, UserFileCollections = ShedPreferences.FileCollectionsListFriend,
-            keyFile = ShedPreferences.FileListAdd
-        )
-        if (list.isEmpty()) {
-            if (statusList == ShedPreferences.listAddYes) {
-                ShedPreferences.saveShedPreferences(
-                    context, UserFileCollections = ShedPreferences.FileCollectionsListFriend,
-                    keyFile = ShedPreferences.FileListAdd,
-                    value = ShedPreferences.listAddNo
-                )
-            }
-        }
-
-        // Состояние для списка
-
-
-       /* if (status == ShedPreferences.listAddYes) {
-            list.clear()
-           list.addAll(dataList)
-        } else {
-            AddVolonter(
-                navController = navController,
-                nameScreen = nameScreenAddUser,
+        LaunchedEffect(Unit) {
+            // Загружаем список друзей
+            val d = FireBaseIDCardUser().getFriendList(context, userType, cardVolonterViewModel)
+            cardVolonterViewModel.removeDuplicatesUserCardsFriends(
+                d,
+                cardVolonterViewModel.friendList
             )
-        }*/
+            friendListState.value = d
+        }
 
+        // Выводим список друзей
         LazyColumn(
             modifier = Modifier
                 .padding(top = 30.dp),
             horizontalAlignment = Alignment.Start,
         ) {
-            itemsIndexed(cardVolonterViewModel.friendList) { _, userdata ->
+            itemsIndexed(list) { _, userdata ->
                 Box(modifier = Modifier) {
                     RowTwo(
                         baground = colorOlivical,
@@ -299,6 +240,23 @@ class IDCardComponets {
                         stateRegion = cardVolonterViewModel.regionStateCardUser,
                         stateVoloYesrs = cardVolonterViewModel.expVolonters,
                         onClick = {
+
+                            val uid = cardVolonterViewModel.emailStateCardUser.value
+                            val status = ShedPreferences.getUserType(context)
+                            val nameCollections = if (status == userType.UserBlind.value) {
+                                NameCollactionFirestore.UsersVolonters
+                            } else {
+                                NameCollactionFirestore.UsersBlind
+                            }
+                            cardVolonterViewModel.idByEmailSearch(
+                                stringSearch = cardVolonterViewModel.emailStateCardUser.value,
+                                uidByStringSave = cardVolonterViewModel.saveID,
+                                context = context,
+                                userType = userType,
+                                nameFileInCollectionSearch = FirebaseString.email
+                            )
+
+
                             onClick()
                         }
                     )
@@ -306,8 +264,133 @@ class IDCardComponets {
             }
         }
     }
-}
 
+
+    @Composable
+    fun LazyColumnListO(
+        context: Context,
+        saveId:MutableState<String>,
+        cardVolonterViewModel: CardVolonterViewModel,
+        userType: UserType,
+        onClick: () -> Unit,  // Принимаем ID друга как параметр
+    ) {
+        // Состояние для хранения списка друзей
+        val friendListState = remember { mutableStateOf<List<UserCardFriend>>(emptyList()) }
+        val list = friendListState.value
+
+        LaunchedEffect(Unit) {
+            // Загружаем список друзей
+            val d = FireBaseIDCardUser().getFriendList(context, userType, cardVolonterViewModel)
+            cardVolonterViewModel.removeDuplicatesUserCardsFriends(
+                d,
+                cardVolonterViewModel.friendList
+            )
+            friendListState.value = d
+        }
+
+        // Выводим список друзей
+        LazyColumn(
+            modifier = Modifier
+                .padding(top = 30.dp),
+            horizontalAlignment = Alignment.Start,
+        ) {
+            itemsIndexed(list) { _, userdata ->
+                Box(modifier = Modifier) {
+                    RowTwo(
+                        baground = colorOlivical,
+                        imageSize = 75.dp,
+                        name = userdata.nane,
+                        surname = userdata.surname,
+                        bitmap = userdata.bitmap,
+                        adress = userdata.adress,
+                        number = userdata.number,
+                        region = userdata.region,
+                        rayon = userdata.rayon,
+                        birthday = userdata.birhday,
+                        yersVolonters = userdata.yersVolonters,
+                        aboutMe = userdata.anoutMe,
+                        textSize = 18.sp,
+                        textColor = BlueBlack,
+                        email = userdata.email,
+                        sizeEmail = 18.sp,
+                        stateBitmap = cardVolonterViewModel.imageStateCardUser,
+                        stateName = cardVolonterViewModel.nameStateCardUser,
+                        stateSurname = cardVolonterViewModel.surnameStateCardUser,
+                        stateEmail = cardVolonterViewModel.emailStateCardUser,
+                        stateAboutMe = cardVolonterViewModel.aboutmeUserCarsd,
+                        stateNumber = cardVolonterViewModel.numberUserCarsd,
+                        stateAddress = cardVolonterViewModel.adresStateCardUser,
+                        stateBirthday = cardVolonterViewModel.birhdayUserCards,
+                        stateRayon = cardVolonterViewModel.rayonStateCardUser,
+                        stateRegion = cardVolonterViewModel.regionStateCardUser,
+                        stateVoloYesrs = cardVolonterViewModel.expVolonters,
+                        onClick = {
+
+                            val uid = cardVolonterViewModel.emailStateCardUser.value
+                            val status = ShedPreferences.getUserType(context)
+                            val nameCollections = if (status == userType.UserBlind.value) {
+                                NameCollactionFirestore.UsersVolonters
+                            } else {
+                                NameCollactionFirestore.UsersBlind
+                            }
+                            cardVolonterViewModel.idByEmailSearch(
+                                stringSearch = userdata.email,
+                                uidByStringSave = saveId,
+                                context = context,
+                                userType = userType,
+                                nameFileInCollectionSearch = FirebaseString.email
+                            )
+
+                            onClick()
+                        }
+                    )
+
+                }
+
+            }
+        }
+    }
+}
+/*@Composable
+fun LazyColumnListID(
+    context: Context,
+    ListIDUser:SnapshotStateList<String>,
+    cardVolonterViewModel: CardVolonterViewModel,
+    userType: UserType,
+     // Принимаем ID друга как параметр
+) {
+    // Состояние для хранения списка друзей
+    val friendListState = remember { mutableStateOf<List<UserCardFriend>>(emptyList()) }
+    val list = friendListState.value
+
+    LaunchedEffect(Unit) {
+        // Загружаем список друзей
+        val d = FireBaseIDCardUser().getFriendList(context, userType, cardVolonterViewModel)
+        cardVolonterViewModel.removeDuplicatesUserCardsFriends(
+            d,
+            cardVolonterViewModel.friendList
+        )
+        friendListState.value = d
+    }
+
+
+    // Выводим список друзей
+    LazyColumn(
+        modifier = Modifier
+            .padding(top = 30.dp),
+        horizontalAlignment = Alignment.Start,
+    ) {
+        itemsIndexed(list) { _, userdata ->
+            cardVolonterViewModel.idByEmailSearchList(
+                stringSearch = userdata.email,
+                userType = userType,
+                context = context,
+                nameFileInCollectionSearch = FirebaseString.email,
+                uidList = ListIDUser
+            )
+        }
+    }
+}*/
 @Composable
 fun AddVolonter(
     navController: NavHostController,
@@ -541,7 +624,6 @@ fun RowTwo(
             //.clip(shape = CircleShape)
             .clickable {
                 onClick()
-
                 stateBitmap.value = bitmap
                 stateName.value = name
                 stateSurname.value = surname

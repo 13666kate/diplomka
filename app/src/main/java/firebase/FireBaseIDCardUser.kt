@@ -1,5 +1,8 @@
 package firebase
 
+//import androidx.compose.runtime.MutableState
+//import com.google.firebase.firestore.FirebaseFirestore
+//import com.google.firebase.firestore.ktx.firestore
 import DataClass.UserCard
 import DataClass.UserCardAdd
 import DataClass.UserCardFriend
@@ -10,15 +13,11 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import com.example.diplom1.ShedPreferences
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
-//import androidx.compose.runtime.MutableState
-//import com.google.firebase.firestore.FirebaseFirestore
-//import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
@@ -810,16 +809,16 @@ class FireBaseIDCardUser {
                             val email = documentsUserAdd.getString(FirebaseString.email)
                             val pathBitmap = storageFireStore(documentId)
                             if (pathBitmap.isEmpty()) {
-                                   Log.e("list", "КАртинка пуста ")
+                                Log.e("list", "КАртинка пуста ")
                             }
 
                             val bitmap = cardVolonterViewModel.loadFirebaseImage(pathBitmap)
                             if (name != null && surname != null && birhday != null && number != null && address != null && email != null && yersVolonters != null && rayon != null && region != null && aboutMe != null) {
                                 ShedPreferences.saveShedPreferences(
-                                   context, ShedPreferences.FileCollectionsListFriend,
-                                   keyFile = ShedPreferences.FileListAdd,
-                                   value = ShedPreferences.listAddYes
-                               )
+                                    context, ShedPreferences.FileCollectionsListFriend,
+                                    keyFile = ShedPreferences.FileListAdd,
+                                    value = ShedPreferences.listAddYes
+                                )
                                 val list = UserCardFriend(
                                     nane = name,
                                     surname = surname,
@@ -862,8 +861,8 @@ class FireBaseIDCardUser {
         return@withContext userCardFriend
     }
 
-    fun listTrue (){
-       // documents()
+    fun listTrue() {
+        // documents()
     }
 
 }
